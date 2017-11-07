@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.creator.lemonade.sample.R;
+import com.creator.lemonade.sample.activity.ClockActivity;
 import com.creator.lemonade.sample.bean.Demo;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class DemoListAdapter extends RecyclerView.Adapter<DemoListAdapter.ViewHo
     public DemoListAdapter(@NonNull Context context) {
         mContext = context;
         final String[] labels = mContext.getResources().getStringArray(R.array.demo_label_list);
-        final Class[] classes = {};
+        final Class[] classes = {ClockActivity.class};
         for (int i = 0; i < labels.length; i++) {
             final Demo demo = new Demo(labels[i], R.mipmap.ic_launcher, classes[i]);
             mDemos.add(demo);
