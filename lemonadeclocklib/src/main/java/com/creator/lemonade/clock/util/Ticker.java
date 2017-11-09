@@ -42,6 +42,11 @@ public class Ticker {
      */
     private OnTimeUpdateListener mOnTimeUpdateListener;
 
+    /**
+     * The current updating state of the ticker
+     */
+    private boolean mUpdating;
+
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -87,6 +92,7 @@ public class Ticker {
      */
     public void onAttachedToWindow(@NonNull Handler handler) {
         mHandler = handler;
+        setUpdating(true);
         registerReceiver();
     }
 
@@ -97,7 +103,7 @@ public class Ticker {
      */
     public void onDetachedFromWindow() {
         unRegisterReceiver();
-        mHandler.removeCallbacks(mTick);
+        setUpdating(false);
         mOnTimeUpdateListener = null;
     }
 
@@ -115,6 +121,7 @@ public class Ticker {
 
     private void onTimeChanged() {
         if (mOnTimeUpdateListener != null) {
+            mTime.setTimeInMillis(System.currentTimeMillis());
             mOnTimeUpdateListener.onTimeChanged(mTime);
         }
     }
@@ -170,5 +177,23 @@ public class Ticker {
         mTimeZone = timeZone;
         createTime(timeZone);
         onTimeChanged();
+    }
+
+    /**
+     * Sets current updating state of the ticker
+     *
+     * @param update True if the ticker is updating, false otherwise
+     */
+    public void setUpdating(boolean update) {
+        if (mHandler != null) {
+            if (mUpdating != update) {
+                if (update) {
+                    mHandler.post(mTick);
+                } else {
+                    mHandler.removeCallbacks(mTick);
+                }
+                mUpdating = update;
+            }
+        }
     }
 }
