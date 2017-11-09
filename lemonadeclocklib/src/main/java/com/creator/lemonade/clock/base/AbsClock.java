@@ -95,7 +95,7 @@ public abstract class AbsClock extends View implements Checkable {
         return mColorAccent;
     }
 
-    public int getColorBackgroundFloating() {
+    protected int getColorBackgroundFloating() {
         return mColorBackgroundFloating;
     }
 
