@@ -8,7 +8,6 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.Checkable;
 
-import com.creator.lemonade.clock.R;
 import com.creator.lemonade.clock.util.DimenTransformer;
 
 /**
@@ -19,15 +18,17 @@ import com.creator.lemonade.clock.util.DimenTransformer;
 @SuppressWarnings("unused")
 public abstract class AbsClock extends View implements Checkable {
 
-    private int mColorPrimary;
-    private int mColorPrimaryDark;
-    private int mColorAccent;
-    private int mColorBackgroundFloating;
-
     /**
      * The current checked state of the view
      */
     private boolean mChecked;
+
+    /**
+     * The temporary {@link TypedValue} for holding attributes
+     *
+     * @see #getThemeIntAttribute(int)
+     */
+    private TypedValue mTempValue;
 
     public AbsClock(Context context) {
         this(context, null);
@@ -43,24 +44,6 @@ public abstract class AbsClock extends View implements Checkable {
 
     public AbsClock(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        initThemeAttributes(context.getTheme());
-    }
-
-    /**
-     * Get some attributes from current theme, such as colorPrimary, colorPrimaryDark, etc.
-     *
-     * @param theme the theme of current context
-     */
-    private void initThemeAttributes(Resources.Theme theme) {
-        TypedValue outValue = new TypedValue();
-        theme.resolveAttribute(R.attr.colorPrimary, outValue, true);
-        mColorPrimary = outValue.data;
-        theme.resolveAttribute(R.attr.colorPrimaryDark, outValue, true);
-        mColorPrimaryDark = outValue.data;
-        theme.resolveAttribute(R.attr.colorAccent, outValue, true);
-        mColorAccent = outValue.data;
-        theme.resolveAttribute(R.attr.colorBackgroundFloating, outValue, true);
-        mColorBackgroundFloating = outValue.data;
     }
 
     /**
@@ -83,20 +66,19 @@ public abstract class AbsClock extends View implements Checkable {
         return DimenTransformer.sp2px(spVal, getResources());
     }
 
-    protected int getColorPrimary() {
-        return mColorPrimary;
-    }
-
-    protected int getColorPrimaryDark() {
-        return mColorPrimaryDark;
-    }
-
-    protected int getColorAccent() {
-        return mColorAccent;
-    }
-
-    protected int getColorBackgroundFloating() {
-        return mColorBackgroundFloating;
+    /**
+     * Get integer attribute from current theme, such as colorPrimary, colorPrimaryDark, etc.
+     *
+     * @param attrId The resource id of attribute
+     * @return The value of attribute
+     */
+    protected int getThemeIntAttribute(int attrId) {
+        if (mTempValue == null) {
+            mTempValue = new TypedValue();
+        }
+        final Resources.Theme theme = getContext().getTheme();
+        theme.resolveAttribute(attrId, mTempValue, true);
+        return mTempValue.data;
     }
 
     @Override
