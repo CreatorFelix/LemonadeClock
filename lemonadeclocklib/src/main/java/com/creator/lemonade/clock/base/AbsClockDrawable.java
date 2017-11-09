@@ -3,6 +3,7 @@ package com.creator.lemonade.clock.base;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.CallSuper;
 
 /**
  * The base class for clock drawable in which defines how the clock will be drawn
@@ -17,6 +18,7 @@ public abstract class AbsClockDrawable extends Drawable {
     private int mShortAxisLength;
 
     @Override
+    @CallSuper
     protected void onBoundsChange(Rect bounds) {
         super.onBoundsChange(bounds);
         mHeight = bounds.height();
