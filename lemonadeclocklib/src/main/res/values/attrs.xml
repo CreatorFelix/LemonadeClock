@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="Clock">
+        <attr name="timeZone" format="string" />
+        <attr name="clockDialColor" format="color" />
+        <attr name="hourHandColor" format="color" />
+        <attr name="minuteHandColor" format="color" />
+        <attr name="secondHandColor" format="color" />
+        <attr name="hourTextColor" format="color" />
+        <attr name="minuteTextColor" format="color" />
+    </declare-styleable>
+</resources>
