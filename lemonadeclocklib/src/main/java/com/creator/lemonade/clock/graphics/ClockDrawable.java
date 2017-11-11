@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.SweepGradient;
+import android.graphics.Typeface;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -90,6 +91,7 @@ public class ClockDrawable extends AbsClockDrawable {
         mMinuteHandPaint.setStyle(Paint.Style.STROKE);
         mSecondHandPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mSecondHandPaint.setStyle(Paint.Style.STROKE);
+        mSecondHandPaint.setStrokeCap(Paint.Cap.ROUND);
         mHourTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         mHourTextPaint.setTextAlign(Paint.Align.RIGHT);
         mMinuteTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
@@ -140,9 +142,9 @@ public class ClockDrawable extends AbsClockDrawable {
         setMinuteHandStrokeWidth(minuteHandStrokeWidth);
         final float secondHandStrokeWidth = mDialRadius * 0.06f;
         setSecondHandStrokeWidth(secondHandStrokeWidth);
-        final float hourTextSize = shortAxis * 0.2f;
+        final float hourTextSize = shortAxis * 0.17f;
         setHourTextSize(hourTextSize);
-        final float minuteTextSize = shortAxis * 0.2f;
+        final float minuteTextSize = shortAxis * 0.17f;
         setMinuteTextSize(minuteTextSize);
         mTextDistance = shortAxis * 0.025f;
         mHourRadius = mDialRadius * 0.95f - hourHandStrokeWidth * 0.5f;
@@ -326,7 +328,8 @@ public class ClockDrawable extends AbsClockDrawable {
     private void setHourTextSize(float newSize) {
         if (mHourTextSize != newSize) {
             mHourTextPaint.setTextSize(newSize);
-            mHourVerticalOffset = mHourTextPaint.getFontMetrics().bottom;
+            Paint.FontMetrics metrics = mHourTextPaint.getFontMetrics();
+            mHourVerticalOffset = -(metrics.descent + metrics.ascent) / 2f;
             mHourTextSize = newSize;
         }
     }
@@ -339,7 +342,8 @@ public class ClockDrawable extends AbsClockDrawable {
     private void setMinuteTextSize(float newSize) {
         if (mMinuteTextSize != newSize) {
             mMinuteTextPaint.setTextSize(newSize);
-            mMinuteVerticalOffset = mMinuteTextPaint.getFontMetrics().bottom;
+            Paint.FontMetrics metrics = mMinuteTextPaint.getFontMetrics();
+            mMinuteVerticalOffset = -(metrics.descent + metrics.ascent) / 2f;
             mMinuteTextSize = newSize;
         }
     }
@@ -378,5 +382,15 @@ public class ClockDrawable extends AbsClockDrawable {
             mSecondHandPaint.setStrokeWidth(newWidth);
             mSecondHandStrokeWidth = newWidth;
         }
+    }
+
+    /**
+     * Sets the clock font typeface
+     *
+     * @param typeface The {@link Typeface}
+     */
+    public void setClockFontTypeface(Typeface typeface) {
+        mHourTextPaint.setTypeface(typeface);
+        mMinuteTextPaint.setTypeface(typeface);
     }
 }

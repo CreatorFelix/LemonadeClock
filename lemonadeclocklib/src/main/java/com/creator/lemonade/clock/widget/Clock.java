@@ -2,6 +2,7 @@ package com.creator.lemonade.clock.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -42,6 +43,8 @@ public class Clock extends AbsClock {
     public Clock(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mClockDrawable = new ClockDrawable();
+        Typeface typeface = Typeface.createFromAsset(context.getAssets(), "fonts/digit_font.ttf");
+        mClockDrawable.setClockFontTypeface(typeface);
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.Clock);
         final String timeZone = array.getString(R.styleable.Clock_timeZone);
         int dialColor = array.getColor(R.styleable.Clock_clockDialColor, getThemeIntAttribute(R.attr.colorBackgroundFloating));
@@ -52,9 +55,9 @@ public class Clock extends AbsClock {
         mClockDrawable.setMinuteHandColor(minColor);
         final int secColor = array.getColor(R.styleable.Clock_secondHandColor, getThemeIntAttribute(R.attr.colorAccent));
         mClockDrawable.setSecondHandColor(secColor);
-        int hourTextColor = array.getColor(R.styleable.Clock_hourTextColor, getThemeIntAttribute(R.attr.titleTextColor));
+        int hourTextColor = array.getColor(R.styleable.Clock_hourTextColor, getThemeIntAttribute(R.attr.colorPrimary));
         mClockDrawable.setHourTextColor(hourTextColor);
-        int minTextColor = array.getColor(R.styleable.Clock_minuteTextColor, getThemeIntAttribute(R.attr.subtitleTextColor));
+        int minTextColor = array.getColor(R.styleable.Clock_minuteTextColor, getThemeIntAttribute(R.attr.colorPrimaryDark));
         mClockDrawable.setMinuteTextColor(minTextColor);
         array.recycle();
         // Set the background to clockDrawable, so that we can
