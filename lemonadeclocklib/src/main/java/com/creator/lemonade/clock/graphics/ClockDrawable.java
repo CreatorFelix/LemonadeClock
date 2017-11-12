@@ -12,6 +12,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextPaint;
+import android.text.TextUtils;
 
 import com.creator.lemonade.clock.base.AbsClockDrawable;
 
@@ -210,8 +211,12 @@ public class ClockDrawable extends AbsClockDrawable {
     }
 
     private void drawTextTime(Canvas canvas) {
-        canvas.drawText(mHour, -mTextDistance, mHourVerticalOffset, mHourTextPaint);
-        canvas.drawText(mMinute, mTextDistance, mMinuteVerticalOffset, mMinuteTextPaint);
+        if (!TextUtils.isEmpty(mHour)) {
+            canvas.drawText(mHour, -mTextDistance, mHourVerticalOffset, mHourTextPaint);
+        }
+        if (!TextUtils.isEmpty(mMinute)) {
+            canvas.drawText(mMinute, mTextDistance, mMinuteVerticalOffset, mMinuteTextPaint);
+        }
     }
 
     /**
