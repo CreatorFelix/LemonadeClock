@@ -129,7 +129,6 @@ public class ClockDrawable extends AbsClockDrawable {
         mMinuteDeg = 360f * actualMinute / 60;
         float actualHour = hour + actualMinute / 60;
         mHourDeg = 360f * actualHour / 12;
-        invalidateSelf();
     }
 
     @Override
