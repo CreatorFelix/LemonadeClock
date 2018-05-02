@@ -3,6 +3,7 @@ package com.creator.lemonade.sample.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,8 +36,9 @@ public class DemoListAdapter extends RecyclerView.Adapter<DemoListAdapter.ViewHo
         }
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (mLayoutInflater == null) {
             mLayoutInflater = LayoutInflater.from(parent.getContext());
         }
@@ -44,15 +46,18 @@ public class DemoListAdapter extends RecyclerView.Adapter<DemoListAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         final Demo demo = getItem(position);
         holder.tvLabel.setText(demo.getLabel());
         holder.ivIcon.setImageResource(demo.getIconResId());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mContext.startActivity(new Intent(mContext,
-                        getItem(holder.getAdapterPosition()).getClazz()));
+                final ActivityOptionsCompat options = ActivityOptionsCompat.makeScaleUpAnimation(v,
+                        (int) v.getTranslationX(), (int) v.getTranslationY(),
+                        v.getWidth(), v.getHeight());
+                mContext.startActivity(new Intent(mContext, getItem(holder.getAdapterPosition()).getClazz()),
+                        options.toBundle());
             }
         });
     }
