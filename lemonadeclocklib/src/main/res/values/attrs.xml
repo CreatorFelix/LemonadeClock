@@ -8,5 +8,7 @@
         <attr name="secondHandColor" format="color" />
         <attr name="hourTextColor" format="color" />
         <attr name="minuteTextColor" format="color" />
+        <attr name="amPmTextColor" format="color" />
+        <attr name="support12Format" format="boolean" />
     </declare-styleable>
 </resources>

@@ -7,12 +7,14 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import com.creator.lemonade.clock.BuildConfig;
 import com.creator.lemonade.clock.R;
 import com.creator.lemonade.clock.base.AbsClock;
 import com.creator.lemonade.clock.graphics.ClockDrawable;
 import com.creator.lemonade.clock.util.Ticker;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Clock can display current time
@@ -26,6 +28,8 @@ public class Clock extends AbsClock {
      */
     private static final String LOG_TAG = "Lemonade_Clock";
 
+    private static final boolean DEFAULT_SUPPORT_12_FORMAT = true;
+
     /**
      * {@link Ticker} controls the updates of time
      */
@@ -35,6 +39,11 @@ public class Clock extends AbsClock {
      * {@link ClockDrawable} controls the drawing of clock
      */
     private final ClockDrawable mClockDrawable;
+
+    /**
+     * Indicates whether to support 12-hour time, default is {@link #DEFAULT_SUPPORT_12_FORMAT}
+     */
+    private boolean mSupport12Format;
 
     public Clock(Context context) {
         this(context, null);
@@ -59,6 +68,9 @@ public class Clock extends AbsClock {
         mClockDrawable.setHourTextColor(hourTextColor);
         int minTextColor = array.getColor(R.styleable.Clock_minuteTextColor, getThemeIntAttribute(R.attr.colorPrimaryDark));
         mClockDrawable.setMinuteTextColor(minTextColor);
+        int amPmTextColor = array.getColor(R.styleable.Clock_amPmTextColor, getThemeIntAttribute(R.attr.colorAccent));
+        mClockDrawable.setAmPmTextColor(amPmTextColor);
+        mSupport12Format = array.getBoolean(R.styleable.Clock_support12Format, DEFAULT_SUPPORT_12_FORMAT);
         array.recycle();
         // Set the background to clockDrawable, so that we can
         // update view by calling ClockDrawable#invalidateSelf()
@@ -67,11 +79,15 @@ public class Clock extends AbsClock {
         mTicker.setOnTimeUpdateListener(new Ticker.OnTimeUpdateListener() {
             @Override
             public void onTimeChanged(Calendar time) {
-                Log.i(LOG_TAG, "onTickerTimeChanged:" + time.getTimeInMillis());
                 int hour = time.get(Calendar.HOUR_OF_DAY);
                 int min = time.get(Calendar.MINUTE);
                 int second = time.get(Calendar.SECOND);
                 int millis = time.get(Calendar.MILLISECOND);
+                if (BuildConfig.DEBUG) {
+                    Log.v(LOG_TAG, String.format(Locale.getDefault(), "onTickerTimeChanged: %d:%d:%d.%d",
+                            hour, min, second, millis));
+                }
+                mClockDrawable.setUse24Format(mSupport12Format && mTicker.is24Format());
                 mClockDrawable.setTime(hour, min, second, millis);
             }
         });

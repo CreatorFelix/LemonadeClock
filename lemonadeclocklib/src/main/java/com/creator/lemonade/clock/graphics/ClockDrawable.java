@@ -16,6 +16,7 @@ import android.text.TextUtils;
 
 import com.creator.lemonade.clock.base.AbsClockDrawable;
 
+import java.text.DateFormatSymbols;
 import java.util.Locale;
 
 /**
@@ -35,12 +36,15 @@ public class ClockDrawable extends AbsClockDrawable {
      */
     private static final String TWO_DIGIT_FORMAT = "%02d";
 
+    private boolean mUse24Format;
+
     private Paint mDialPaint;
     private Paint mHourHandPaint;
     private Paint mMinuteHandPaint;
     private Paint mSecondHandPaint;
     private Paint mHourTextPaint;
     private Paint mMinuteTextPaint;
+    private Paint mAmPmTextPaint;
 
     private float mDialRadius;
     private float mHourRadius;
@@ -51,6 +55,7 @@ public class ClockDrawable extends AbsClockDrawable {
     private float mSecondHandStrokeWidth;
     private float mHourVerticalOffset;
     private float mMinuteVerticalOffset;
+    private float mAmPmVerticalOffset;
 
     /**
      * The extra distance between minute text and hour text
@@ -63,8 +68,10 @@ public class ClockDrawable extends AbsClockDrawable {
     private int mColorDial;
     private int mColorHourText;
     private int mColorMinuteText;
+    private int mColorAmPmText;
     private float mHourTextSize;
     private float mMinuteTextSize;
+    private float mAmPmTextSize;
 
     private float mHourDeg;
     private float mMinuteDeg;
@@ -73,11 +80,23 @@ public class ClockDrawable extends AbsClockDrawable {
     private final int[] mSweepColors = new int[3];
     private final float[] mColorPositions = {0, 0.5f, 1};
 
+    private String mAmPmStrings[];
     private String mHour;
     private String mMinute;
+    private String mAmPm;
+    private float mAmPmTranslateY;
 
     public ClockDrawable() {
         initPaint();
+        initAmPmStrings();
+    }
+
+    /**
+     * Initialize the string array of am/pm
+     */
+    private void initAmPmStrings() {
+        DateFormatSymbols symbols = new DateFormatSymbols();
+        mAmPmStrings = symbols.getAmPmStrings();
     }
 
     /**
@@ -97,6 +116,8 @@ public class ClockDrawable extends AbsClockDrawable {
         mHourTextPaint.setTextAlign(Paint.Align.RIGHT);
         mMinuteTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         mMinuteTextPaint.setTextAlign(Paint.Align.LEFT);
+        mAmPmTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+        mAmPmTextPaint.setTextAlign(Paint.Align.CENTER);
     }
 
     /**
@@ -121,7 +142,14 @@ public class ClockDrawable extends AbsClockDrawable {
      * @param millisecond The millisecond to show
      */
     private void onTimeChanged(int hour, int minute, int second, int millisecond) {
-        mHour = String.format(Locale.getDefault(), TWO_DIGIT_FORMAT, hour);
+        if (mUse24Format) {
+            mHour = String.format(Locale.getDefault(), TWO_DIGIT_FORMAT, hour);
+        } else {
+            mHour = String.format(Locale.getDefault(), TWO_DIGIT_FORMAT, hour > 12 ? hour % 12 : hour);
+            if (mAmPmStrings != null && mAmPmStrings.length > 1) {
+                mAmPm = mAmPmStrings[hour > 12 ? 1 : 0];
+            }
+        }
         mMinute = String.format(Locale.getDefault(), TWO_DIGIT_FORMAT, minute);
         float actualSecond = second + millisecond / 1000f;
         mSecondDeg = 360f * actualSecond / 60;
@@ -146,10 +174,13 @@ public class ClockDrawable extends AbsClockDrawable {
         setHourTextSize(hourTextSize);
         final float minuteTextSize = shortAxis * 0.17f;
         setMinuteTextSize(minuteTextSize);
+        final float amPmTextSize = shortAxis * 0.08f;
+        setAmPmTextSize(amPmTextSize);
         mTextDistance = shortAxis * 0.025f;
         mHourRadius = mDialRadius * 0.95f - hourHandStrokeWidth * 0.5f;
         mMinuteRadius = mHourRadius - hourHandStrokeWidth * 0.5f + minuteHandStrokeWidth * 0.5f;
         mSecondRadius = mHourRadius - hourHandStrokeWidth * 0.5f + secondHandStrokeWidth * 0.5f;
+        mAmPmTranslateY = shortAxis * 0.18f;
         invalidateSelf();
     }
 
@@ -216,6 +247,12 @@ public class ClockDrawable extends AbsClockDrawable {
         if (!TextUtils.isEmpty(mMinute)) {
             canvas.drawText(mMinute, mTextDistance, mMinuteVerticalOffset, mMinuteTextPaint);
         }
+        if (!isUse24Format() && !TextUtils.isEmpty(mAmPm)) {
+            canvas.save();
+            canvas.translate(0, mAmPmTranslateY);
+            canvas.drawText(mAmPm, 0, mAmPmVerticalOffset, mAmPmTextPaint);
+            canvas.restore();
+        }
     }
 
     /**
@@ -236,6 +273,7 @@ public class ClockDrawable extends AbsClockDrawable {
         mHourTextPaint.setAlpha(alpha);
         mMinuteTextPaint.setAlpha(alpha);
         mHourHandPaint.setAlpha(alpha);
+        mAmPmTextPaint.setAlpha(alpha);
         mMinuteHandPaint.setAlpha(alpha);
         mSecondHandPaint.setAlpha(alpha);
         invalidateSelf();
@@ -246,6 +284,7 @@ public class ClockDrawable extends AbsClockDrawable {
         mDialPaint.setColorFilter(colorFilter);
         mHourTextPaint.setColorFilter(colorFilter);
         mMinuteTextPaint.setColorFilter(colorFilter);
+        mAmPmTextPaint.setColorFilter(colorFilter);
         mHourHandPaint.setColorFilter(colorFilter);
         mMinuteHandPaint.setColorFilter(colorFilter);
         mSecondHandPaint.setColorFilter(colorFilter);
@@ -261,6 +300,7 @@ public class ClockDrawable extends AbsClockDrawable {
         if (mColorHourHand != newColor) {
             mHourHandPaint.setShader(createSweepShader(newColor));
             mColorHourHand = newColor;
+            invalidateSelf();
         }
     }
 
@@ -273,6 +313,7 @@ public class ClockDrawable extends AbsClockDrawable {
         if (mColorMinuteHand != newColor) {
             mMinuteHandPaint.setShader(createSweepShader(newColor));
             mColorMinuteHand = newColor;
+            invalidateSelf();
         }
     }
 
@@ -285,6 +326,7 @@ public class ClockDrawable extends AbsClockDrawable {
         if (mColorSecondHand != newColor) {
             mSecondHandPaint.setShader(createSweepShader(newColor));
             mColorSecondHand = newColor;
+            invalidateSelf();
         }
     }
 
@@ -297,6 +339,7 @@ public class ClockDrawable extends AbsClockDrawable {
         if (mColorDial != newColor) {
             mDialPaint.setColor(newColor);
             mColorDial = newColor;
+            invalidateSelf();
         }
     }
 
@@ -309,6 +352,7 @@ public class ClockDrawable extends AbsClockDrawable {
         if (mColorHourText != newColor) {
             mHourTextPaint.setColor(newColor);
             mColorHourText = newColor;
+            invalidateSelf();
         }
     }
 
@@ -321,6 +365,7 @@ public class ClockDrawable extends AbsClockDrawable {
         if (mColorMinuteText != newColor) {
             mMinuteTextPaint.setColor(newColor);
             mColorMinuteText = newColor;
+            invalidateSelf();
         }
     }
 
@@ -332,9 +377,9 @@ public class ClockDrawable extends AbsClockDrawable {
     private void setHourTextSize(float newSize) {
         if (mHourTextSize != newSize) {
             mHourTextPaint.setTextSize(newSize);
-            Paint.FontMetrics metrics = mHourTextPaint.getFontMetrics();
-            mHourVerticalOffset = -(metrics.descent + metrics.ascent) / 2f;
+            mHourVerticalOffset = calculateTextVerticalOffset(mHourTextPaint);
             mHourTextSize = newSize;
+            invalidateSelf();
         }
     }
 
@@ -346,9 +391,36 @@ public class ClockDrawable extends AbsClockDrawable {
     private void setMinuteTextSize(float newSize) {
         if (mMinuteTextSize != newSize) {
             mMinuteTextPaint.setTextSize(newSize);
-            Paint.FontMetrics metrics = mMinuteTextPaint.getFontMetrics();
-            mMinuteVerticalOffset = -(metrics.descent + metrics.ascent) / 2f;
+            mMinuteVerticalOffset = calculateTextVerticalOffset(mMinuteTextPaint);
             mMinuteTextSize = newSize;
+            invalidateSelf();
+        }
+    }
+
+    /**
+     * Sets the color of am/pm text
+     *
+     * @param newColor The new text color
+     */
+    public void setAmPmTextColor(@ColorInt int newColor) {
+        if (mColorAmPmText != newColor) {
+            mAmPmTextPaint.setColor(newColor);
+            mColorAmPmText = newColor;
+            invalidateSelf();
+        }
+    }
+
+    /**
+     * Sets the size of am/pm text
+     *
+     * @param newSize The new text size
+     */
+    private void setAmPmTextSize(float newSize) {
+        if (mAmPmTextSize != newSize) {
+            mAmPmTextPaint.setTextSize(newSize);
+            mAmPmVerticalOffset = calculateTextVerticalOffset(mAmPmTextPaint);
+            mAmPmTextSize = newSize;
+            invalidateSelf();
         }
     }
 
@@ -361,6 +433,7 @@ public class ClockDrawable extends AbsClockDrawable {
         if (mHourHandStrokeWidth != newWidth) {
             mHourHandPaint.setStrokeWidth(newWidth);
             mHourHandStrokeWidth = newWidth;
+            invalidateSelf();
         }
     }
 
@@ -373,6 +446,7 @@ public class ClockDrawable extends AbsClockDrawable {
         if (mMinuteHandStrokeWidth != newWidth) {
             mMinuteHandPaint.setStrokeWidth(newWidth);
             mMinuteHandStrokeWidth = newWidth;
+            invalidateSelf();
         }
     }
 
@@ -385,6 +459,7 @@ public class ClockDrawable extends AbsClockDrawable {
         if (mSecondHandStrokeWidth != newWidth) {
             mSecondHandPaint.setStrokeWidth(newWidth);
             mSecondHandStrokeWidth = newWidth;
+            invalidateSelf();
         }
     }
 
@@ -393,8 +468,44 @@ public class ClockDrawable extends AbsClockDrawable {
      *
      * @param typeface The {@link Typeface}
      */
-    public void setClockFontTypeface(Typeface typeface) {
+    public void setClockFontTypeface(@NonNull Typeface typeface) {
         mHourTextPaint.setTypeface(typeface);
         mMinuteTextPaint.setTypeface(typeface);
+        mAmPmTextPaint.setFakeBoldText(true);
+        mAmPmTextPaint.setTextScaleX(1.25f);
+        mAmPmTextPaint.setLetterSpacing(0.15f);
+        invalidateSelf();
+    }
+
+    /**
+     * Indicates whether to use 24-hour time
+     *
+     * @return true if use 24-hour time,false otherwise
+     */
+    private boolean isUse24Format() {
+        return mUse24Format;
+    }
+
+    /**
+     * Sets whether to use 24-hour time
+     *
+     * @param use24Format true if use 24-hour time,false otherwise
+     */
+    public void setUse24Format(boolean use24Format) {
+        if (mUse24Format != use24Format) {
+            mUse24Format = use24Format;
+            invalidateSelf();
+        }
+    }
+
+    /**
+     * Calculates the offset of the text central axis
+     *
+     * @param textPaint the paint used to draw text
+     * @return offset in pixels
+     */
+    private static float calculateTextVerticalOffset(@NonNull Paint textPaint) {
+        Paint.FontMetrics metrics = textPaint.getFontMetrics();
+        return -(metrics.descent + metrics.ascent) / 2f;
     }
 }

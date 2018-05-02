@@ -19,6 +19,8 @@ import java.util.TimeZone;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class Ticker {
 
+    private boolean mIs24Format;
+
     /**
      * The delayed time before next time update
      */
@@ -50,9 +52,13 @@ public class Ticker {
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (mTimeZone == null && Intent.ACTION_TIMEZONE_CHANGED.equals(intent.getAction())) {
+            final String action = intent.getAction();
+            if (mTimeZone == null && Intent.ACTION_TIMEZONE_CHANGED.equals(action)) {
                 final String timeZone = intent.getStringExtra("time-zone");
                 createTime(timeZone);
+            }
+            if (Intent.ACTION_TIME_CHANGED.equals(action)) {
+                update24Format(context);
             }
             onTimeChanged();
         }
@@ -81,7 +87,21 @@ public class Ticker {
     public Ticker(Context context, String timeZone) {
         mContext = context;
         mTimeZone = timeZone;
+        update24Format(context);
         createTime(mTimeZone);
+    }
+
+    private void update24Format(Context context) {
+        mIs24Format = android.text.format.DateFormat.is24HourFormat(context);
+    }
+
+    /**
+     * Indicates whether is 24-hour time
+     *
+     * @return true if is 24-hour time, false otherwise
+     */
+    public boolean is24Format() {
+        return mIs24Format;
     }
 
     /**
