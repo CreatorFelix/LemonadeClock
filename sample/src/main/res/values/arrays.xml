@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="demo_label_list">
-        <item>Clock</item>
+        <item>@string/label_demo_clock</item>
+        <item>@string/label_demo_stopwatch</item>
     </string-array>
 </resources>

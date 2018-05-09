@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">LemonadeClock</string>
+    <string name="label_demo_clock">Clock</string>
+    <string name="label_demo_stopwatch">Stopwatch</string>
 </resources>

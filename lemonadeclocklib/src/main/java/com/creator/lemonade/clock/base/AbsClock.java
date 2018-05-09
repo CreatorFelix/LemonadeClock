@@ -8,7 +8,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.Checkable;
 
-import com.creator.lemonade.clock.util.DimenTransformer;
+import com.creator.lemonade.clock.util.DimenConverter;
 
 /**
  * This is a base class for clock view
@@ -53,7 +53,7 @@ public abstract class AbsClock extends View implements Checkable {
      * @return px value
      */
     protected int dp2px(float dpVal) {
-        return DimenTransformer.dp2px(dpVal, getResources());
+        return DimenConverter.dp2px(dpVal, getResources());
     }
 
     /**
@@ -63,7 +63,7 @@ public abstract class AbsClock extends View implements Checkable {
      * @return px value
      */
     protected int sp2dp(float spVal) {
-        return DimenTransformer.sp2px(spVal, getResources());
+        return DimenConverter.sp2px(spVal, getResources());
     }
 
     /**

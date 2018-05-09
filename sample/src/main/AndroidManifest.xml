@@ -23,7 +23,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.ClockActivity" />
+        <activity
+            android:name=".activity.ClockActivity"
+            android:label="@string/label_demo_clock" />
+        <activity
+            android:name=".activity.StopwatchActivity"
+            android:label="@string/label_demo_stopwatch" />
     </application>
 
 </manifest>

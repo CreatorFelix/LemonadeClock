@@ -8,7 +8,7 @@ import android.util.TypedValue;
  *
  * @author Felix.Liang
  */
-public class DimenTransformer {
+public class DimenConverter {
 
     /**
      * Converts dp value to px value
