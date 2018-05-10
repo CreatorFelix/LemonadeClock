@@ -80,7 +80,6 @@ public class Stopwatch extends AbsClock implements StopwatchModel.StopwatchWatch
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         mStopwatchModel.onAttachToWindow(getHandler());
-        mStopwatchModel.startOrResume();
     }
 
     @Nullable
