@@ -14,21 +14,27 @@ import com.creator.lemonade.clock.base.AbsClockDrawable;
  */
 public class StopwatchDrawable extends AbsClockDrawable {
 
+    private long mCurrentTime;
+
     public StopwatchDrawable() {
+    }
+
+    public void setTime(long timeInMillis) {
+        if (mCurrentTime != timeInMillis) {
+            mCurrentTime = timeInMillis;
+            invalidateSelf();
+        }
     }
 
     @Override
     public void draw(@NonNull Canvas canvas) {
-
     }
 
     @Override
     public void setAlpha(int alpha) {
-
     }
 
     @Override
     public void setColorFilter(@Nullable ColorFilter colorFilter) {
-
     }
 }
