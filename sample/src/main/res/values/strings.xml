@@ -2,4 +2,10 @@
     <string name="app_name">LemonadeClock</string>
     <string name="label_demo_clock">Clock</string>
     <string name="label_demo_stopwatch">Stopwatch</string>
+    <string name="start">start</string>
+    <string name="pause">pause</string>
+    <string name="lap">lap</string>
+    <string name="resume">resume</string>
+    <string name="reset">reset</string>
+    <string name="demo_icon">demo icon</string>
 </resources>
