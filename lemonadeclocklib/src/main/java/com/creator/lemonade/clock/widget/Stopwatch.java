@@ -17,7 +17,7 @@ import com.creator.lemonade.clock.util.StopwatchModel;
  * @author Felix.Liang
  */
 @SuppressWarnings("unused")
-public class Stopwatch extends AbsClock implements StopwatchModel.StopwatchWatcher {
+public class Stopwatch extends AbsClock {
 
     /**
      * The logging tag used by this class with android.util.Log
@@ -39,23 +39,23 @@ public class Stopwatch extends AbsClock implements StopwatchModel.StopwatchWatch
         mStopwatchDrawable = new StopwatchDrawable();
         setBackground(mStopwatchDrawable);
         mStopwatchModel = new StopwatchModel();
-        mStopwatchModel.setStopwatchListener(this);
-    }
+        mStopwatchModel.setStopwatchListener(new StopwatchModel.StopwatchWatcher() {
+            @Override
+            public void onTimeChanged(long timeInMillis) {
+                mStopwatchDrawable.setTime(timeInMillis);
+                if (mStopwatchListener != null) mStopwatchListener.onTimeChanged(timeInMillis);
+            }
 
-    @Override
-    public void onTimeChanged(long timeInMillis) {
-        mStopwatchDrawable.setTime(timeInMillis);
-        if (mStopwatchListener != null) mStopwatchListener.onTimeChanged(timeInMillis);
-    }
+            @Override
+            public void onStateChanged(boolean started, boolean paused) {
+                if (mStopwatchListener != null) mStopwatchListener.onStateChanged(started, paused);
+            }
 
-    @Override
-    public void onStateChanged(boolean started, boolean paused) {
-        if (mStopwatchListener != null) mStopwatchListener.onStateChanged(started, paused);
-    }
-
-    @Override
-    public void onLap(long lapTimeInMillis) {
-        if (mStopwatchListener != null) mStopwatchListener.onLap(lapTimeInMillis);
+            @Override
+            public void onLap(long lapTimeInMillis) {
+                if (mStopwatchListener != null) mStopwatchListener.onLap(lapTimeInMillis);
+            }
+        });
     }
 
     public void setStopwatchListener(StopwatchListener listener) {
@@ -65,6 +65,18 @@ public class Stopwatch extends AbsClock implements StopwatchModel.StopwatchWatch
     }
 
     public static abstract class StopwatchListenerAdapter implements StopwatchListener {
+
+        @Override
+        public void onTimeChanged(long timeInMillis) {
+        }
+
+        @Override
+        public void onStateChanged(boolean started, boolean paused) {
+        }
+
+        @Override
+        public void onLap(long lapTimeInMillis) {
+        }
     }
 
     public interface StopwatchListener {
@@ -82,21 +94,6 @@ public class Stopwatch extends AbsClock implements StopwatchModel.StopwatchWatch
         mStopwatchModel.onAttachToWindow(getHandler());
     }
 
-    @Nullable
-    @Override
-    protected Parcelable onSaveInstanceState() {
-        Parcelable superState = super.onSaveInstanceState();
-        SavedState ss = new SavedState(superState);
-        ss.stopwatchState = mStopwatchModel.getState();
-        return ss;
-    }
-
-    @Override
-    protected void onWindowVisibilityChanged(int visibility) {
-        super.onWindowVisibilityChanged(visibility);
-        mStopwatchModel.setSuspend(visibility != VISIBLE);
-    }
-
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
         if (!(state instanceof SavedState)) {
@@ -106,6 +103,45 @@ public class Stopwatch extends AbsClock implements StopwatchModel.StopwatchWatch
         SavedState ss = (SavedState) state;
         mStopwatchModel.setState(ss.stopwatchState);
         super.onRestoreInstanceState(ss.getSuperState());
+    }
+
+    @Override
+    protected void onWindowVisibilityChanged(int visibility) {
+        super.onWindowVisibilityChanged(visibility);
+        mStopwatchModel.setSuspend(visibility != VISIBLE);
+    }
+
+    public void startOrResume() {
+        mStopwatchModel.startOrResume();
+    }
+
+    public void pause() {
+        mStopwatchModel.pause();
+    }
+
+    public void lap() {
+        mStopwatchModel.lap();
+    }
+
+    public void reset() {
+        mStopwatchModel.reset();
+    }
+
+    public boolean isPaused() {
+        return mStopwatchModel.isPaused();
+    }
+
+    public boolean isStarted() {
+        return mStopwatchModel.isStarted();
+    }
+
+    @Nullable
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        SavedState ss = new SavedState(superState);
+        ss.stopwatchState = mStopwatchModel.getState();
+        return ss;
     }
 
     @Override
