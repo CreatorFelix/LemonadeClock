@@ -75,7 +75,11 @@ public class StopwatchModel {
 
     private void resume() {
         if (isPaused()) {
-            mState.pause = 0;
+            final long pauseTime = mState.pause;
+            mState.base += (getElapsedTime() - pauseTime);
+            mState.pause = StopwatchState.DEFAULT_TIME;
+            if (mStopwatchWatcher != null)
+                mStopwatchWatcher.onStateChanged(isStarted(), isPaused());
             updateRunning();
         }
     }
@@ -83,6 +87,8 @@ public class StopwatchModel {
     public void pause() {
         if (isStarted() && !isPaused()) {
             mState.pause = getElapsedTime();
+            if (mStopwatchWatcher != null)
+                mStopwatchWatcher.onStateChanged(isStarted(), isPaused());
             updateRunning();
         }
     }
@@ -122,7 +128,7 @@ public class StopwatchModel {
     }
 
     public boolean isPaused() {
-        return mState.started && mState.pause != 0;
+        return mState.started && mState.pause != StopwatchState.DEFAULT_TIME;
     }
 
     public void reset() {
@@ -132,7 +138,7 @@ public class StopwatchModel {
 
     private void updateRunning() {
         final boolean started = mState.started;
-        boolean running = !mSuspend && started;
+        boolean running = !mSuspend && started && !isPaused();
         if (mRunning != running && mHandler != null) {
             if (running) {
                 mHandler.post(mTick);
@@ -149,6 +155,10 @@ public class StopwatchModel {
 
     public void setState(StopwatchState ss) {
         mState = new StopwatchState(ss);
+        if (mStopwatchWatcher != null) {
+            mStopwatchWatcher.onStateChanged(isStarted(), isPaused());
+            mStopwatchWatcher.onTimeChanged(getStopwatchTime());
+        }
         updateRunning();
     }
 
