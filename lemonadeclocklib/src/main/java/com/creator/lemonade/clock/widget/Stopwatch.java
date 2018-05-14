@@ -1,12 +1,14 @@
 package com.creator.lemonade.clock.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.AbsSavedState;
 
+import com.creator.lemonade.clock.R;
 import com.creator.lemonade.clock.base.AbsClock;
 import com.creator.lemonade.clock.graphics.StopwatchDrawable;
 import com.creator.lemonade.clock.util.StopwatchModel;
@@ -37,6 +39,20 @@ public class Stopwatch extends AbsClock {
     public Stopwatch(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mStopwatchDrawable = new StopwatchDrawable();
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.Stopwatch);
+        final int dialColor = array.getColor(R.styleable.Stopwatch_dialColor, getThemeIntAttribute(R.attr.colorBackgroundFloating));
+        mStopwatchDrawable.setDialColor(dialColor);
+        final int secColor = array.getColor(R.styleable.Stopwatch_secondHandColor, getThemeIntAttribute(R.attr.colorAccent));
+        mStopwatchDrawable.setSecondHandColor(secColor);
+        final int minColor = array.getColor(R.styleable.Stopwatch_minuteHandColor, getThemeIntAttribute(R.attr.colorPrimaryDark));
+        mStopwatchDrawable.setMinuteHandColor(minColor);
+        final int secTextColor = array.getColor(R.styleable.Stopwatch_secondTextColor, getThemeIntAttribute(R.attr.colorPrimary));
+        mStopwatchDrawable.setSecondTextColor(secTextColor);
+        final int millisTextColor = array.getColor(R.styleable.Stopwatch_millisecondTextColor, getThemeIntAttribute(R.attr.colorAccent));
+        mStopwatchDrawable.setMillisTextColor(millisTextColor);
+        final int minTextColor = array.getColor(R.styleable.Stopwatch_minuteTextColor, getThemeIntAttribute(R.attr.minuteTextColor));
+        mStopwatchDrawable.setMinuteTextColor(minTextColor);
+        array.recycle();
         setBackground(mStopwatchDrawable);
         mStopwatchModel = new StopwatchModel();
         mStopwatchModel.setStopwatchListener(new StopwatchModel.StopwatchWatcher() {
