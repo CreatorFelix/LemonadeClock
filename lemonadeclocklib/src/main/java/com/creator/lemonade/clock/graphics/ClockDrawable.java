@@ -31,11 +31,6 @@ public class ClockDrawable extends AbsClockDrawable {
      */
     private static final float INIT_DEGREE_OFFSET = 90;
 
-    /**
-     * The string used to convert value to two digit value
-     */
-    private static final String TWO_DIGIT_FORMAT = "%02d";
-
     private boolean mUse24Format;
 
     private Paint mDialPaint;
