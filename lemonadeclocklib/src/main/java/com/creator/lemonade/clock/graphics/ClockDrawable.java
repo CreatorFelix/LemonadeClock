@@ -181,7 +181,6 @@ public class ClockDrawable extends AbsClockDrawable {
         mMinuteRadius = mHourRadius - hourHandStrokeWidth * 0.5f + minuteHandStrokeWidth * 0.5f;
         mSecondRadius = mHourRadius - hourHandStrokeWidth * 0.5f + secondHandStrokeWidth * 0.5f;
         mAmPmTranslateY = shortAxis * 0.18f;
-        invalidateSelf();
     }
 
     @Override
