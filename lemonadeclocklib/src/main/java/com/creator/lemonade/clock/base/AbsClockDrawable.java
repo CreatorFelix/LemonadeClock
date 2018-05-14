@@ -76,7 +76,6 @@ public abstract class AbsClockDrawable extends Drawable {
         return PixelFormat.TRANSPARENT;
     }
 
-
     /**
      * Calculates the offset of the text central axis
      *
@@ -87,7 +86,6 @@ public abstract class AbsClockDrawable extends Drawable {
         Paint.FontMetrics metrics = textPaint.getFontMetrics();
         return -(metrics.descent + metrics.ascent) / 2f;
     }
-
 
     /**
      * Create a sweep gradient shader
