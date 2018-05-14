@@ -497,15 +497,4 @@ public class ClockDrawable extends AbsClockDrawable {
             invalidateSelf();
         }
     }
-
-    /**
-     * Calculates the offset of the text central axis
-     *
-     * @param textPaint the paint used to draw text
-     * @return offset in pixels
-     */
-    private static float calculateTextVerticalOffset(@NonNull Paint textPaint) {
-        Paint.FontMetrics metrics = textPaint.getFontMetrics();
-        return -(metrics.descent + metrics.ascent) / 2f;
-    }
 }

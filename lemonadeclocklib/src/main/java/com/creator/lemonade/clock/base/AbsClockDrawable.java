@@ -1,9 +1,11 @@
 package com.creator.lemonade.clock.base;
 
+import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 
 /**
  * The base class for clock drawable in which defines how the clock will be drawn
@@ -56,5 +58,18 @@ public abstract class AbsClockDrawable extends Drawable {
     @Override
     public int getOpacity() {
         return PixelFormat.TRANSPARENT;
+    }
+
+
+
+    /**
+     * Calculates the offset of the text central axis
+     *
+     * @param textPaint the paint used to draw text
+     * @return offset in pixels
+     */
+    protected static float calculateTextVerticalOffset(@NonNull Paint textPaint) {
+        Paint.FontMetrics metrics = textPaint.getFontMetrics();
+        return -(metrics.descent + metrics.ascent) / 2f;
     }
 }
