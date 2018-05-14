@@ -64,9 +64,9 @@ public class Clock extends AbsClock {
         mClockDrawable.setMinuteHandColor(minColor);
         final int secColor = array.getColor(R.styleable.Clock_secondHandColor, getThemeIntAttribute(R.attr.colorAccent));
         mClockDrawable.setSecondHandColor(secColor);
-        int hourTextColor = array.getColor(R.styleable.Clock_hourTextColor, getThemeIntAttribute(R.attr.colorPrimary));
+        int hourTextColor = array.getColor(R.styleable.Clock_hourTextColor, getThemeIntAttribute(R.attr.colorPrimaryDark));
         mClockDrawable.setHourTextColor(hourTextColor);
-        int minTextColor = array.getColor(R.styleable.Clock_minuteTextColor, getThemeIntAttribute(R.attr.colorPrimaryDark));
+        int minTextColor = array.getColor(R.styleable.Clock_minuteTextColor, getThemeIntAttribute(R.attr.colorPrimary));
         mClockDrawable.setMinuteTextColor(minTextColor);
         int amPmTextColor = array.getColor(R.styleable.Clock_amPmTextColor, getThemeIntAttribute(R.attr.colorAccent));
         mClockDrawable.setAmPmTextColor(amPmTextColor);
