@@ -22,6 +22,11 @@ public abstract class AbsClockDrawable extends Drawable {
      * The string used to convert value to two digit value
      */
     protected static final String TWO_DIGIT_FORMAT = "%02d";
+
+    /**
+     * The string used to convert value to three digit value
+     */
+    protected static final String THREE_DIGIT_FORMAT = "%03d";
     private static final int[] SWEEP_COLORS = new int[3];
     private static final float[] COLOR_POSITIONS = {0, 0.5f, 1};
     private int mHeight;
