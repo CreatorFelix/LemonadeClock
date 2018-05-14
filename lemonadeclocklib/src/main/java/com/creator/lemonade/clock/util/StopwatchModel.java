@@ -94,6 +94,7 @@ public class StopwatchModel {
     }
 
     private long getStopwatchTime() {
+        if (!isStarted()) return StopwatchState.DEFAULT_TIME;
         if (isPaused()) {
             return mState.pause - mState.base;
         } else {
@@ -134,6 +135,7 @@ public class StopwatchModel {
     public void reset() {
         setStarted(false);
         mState.clear();
+        if (mStopwatchWatcher != null) mStopwatchWatcher.onTimeChanged(getStopwatchTime());
     }
 
     private void updateRunning() {
