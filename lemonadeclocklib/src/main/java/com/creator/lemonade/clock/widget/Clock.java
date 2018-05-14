@@ -52,26 +52,26 @@ public class Clock extends AbsClock {
     public Clock(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mClockDrawable = new ClockDrawable();
-        Typeface typeface = Typeface.createFromAsset(context.getAssets(), "fonts/digit_font.ttf");
-        mClockDrawable.setClockFontTypeface(typeface);
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.Clock);
         final String timeZone = array.getString(R.styleable.Clock_timeZone);
-        int dialColor = array.getColor(R.styleable.Clock_dialColor, getThemeIntAttribute(R.attr.colorBackgroundFloating));
-        mClockDrawable.setDialColor(dialColor);
-        int hourColor = array.getColor(R.styleable.Clock_hourHandColor, getThemeIntAttribute(R.attr.colorPrimaryDark));
-        mClockDrawable.setHourHandColor(hourColor);
-        int minColor = array.getColor(R.styleable.Clock_minuteHandColor, getThemeIntAttribute(R.attr.colorPrimary));
-        mClockDrawable.setMinuteHandColor(minColor);
+        final int dialColor = array.getColor(R.styleable.Clock_dialColor, getThemeIntAttribute(R.attr.colorBackgroundFloating));
+        final int hourColor = array.getColor(R.styleable.Clock_hourHandColor, getThemeIntAttribute(R.attr.colorPrimaryDark));
+        final int minColor = array.getColor(R.styleable.Clock_minuteHandColor, getThemeIntAttribute(R.attr.colorPrimary));
         final int secColor = array.getColor(R.styleable.Clock_secondHandColor, getThemeIntAttribute(R.attr.colorAccent));
-        mClockDrawable.setSecondHandColor(secColor);
-        int hourTextColor = array.getColor(R.styleable.Clock_hourTextColor, getThemeIntAttribute(R.attr.colorPrimaryDark));
-        mClockDrawable.setHourTextColor(hourTextColor);
-        int minTextColor = array.getColor(R.styleable.Clock_minuteTextColor, getThemeIntAttribute(R.attr.colorPrimary));
-        mClockDrawable.setMinuteTextColor(minTextColor);
-        int amPmTextColor = array.getColor(R.styleable.Clock_amPmTextColor, getThemeIntAttribute(R.attr.colorAccent));
-        mClockDrawable.setAmPmTextColor(amPmTextColor);
+        final int hourTextColor = array.getColor(R.styleable.Clock_hourTextColor, getThemeIntAttribute(R.attr.colorPrimaryDark));
+        final int minTextColor = array.getColor(R.styleable.Clock_minuteTextColor, getThemeIntAttribute(R.attr.colorPrimary));
+        final int amPmTextColor = array.getColor(R.styleable.Clock_amPmTextColor, getThemeIntAttribute(R.attr.colorAccent));
         mSupport12Format = array.getBoolean(R.styleable.Clock_support12Format, DEFAULT_SUPPORT_12_FORMAT);
         array.recycle();
+        Typeface typeface = Typeface.createFromAsset(context.getAssets(), "fonts/digit_font.ttf");
+        mClockDrawable.setClockFontTypeface(typeface);
+        mClockDrawable.setDialColor(dialColor);
+        mClockDrawable.setHourHandColor(hourColor);
+        mClockDrawable.setMinuteHandColor(minColor);
+        mClockDrawable.setSecondHandColor(secColor);
+        mClockDrawable.setHourTextColor(hourTextColor);
+        mClockDrawable.setMinuteTextColor(minTextColor);
+        mClockDrawable.setAmPmTextColor(amPmTextColor);
         // Set the background to clockDrawable, so that we can
         // update view by calling ClockDrawable#invalidateSelf()
         setBackground(mClockDrawable);
