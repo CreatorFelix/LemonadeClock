@@ -56,7 +56,7 @@ public class Clock extends AbsClock {
         mClockDrawable.setClockFontTypeface(typeface);
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.Clock);
         final String timeZone = array.getString(R.styleable.Clock_timeZone);
-        int dialColor = array.getColor(R.styleable.Clock_clockDialColor, getThemeIntAttribute(R.attr.colorBackgroundFloating));
+        int dialColor = array.getColor(R.styleable.Clock_dialColor, getThemeIntAttribute(R.attr.colorBackgroundFloating));
         mClockDrawable.setDialColor(dialColor);
         int hourColor = array.getColor(R.styleable.Clock_hourHandColor, getThemeIntAttribute(R.attr.colorPrimaryDark));
         mClockDrawable.setHourHandColor(hourColor);
