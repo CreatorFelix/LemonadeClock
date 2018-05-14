@@ -2,8 +2,11 @@ package com.creator.lemonade.clock.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.AbsSavedState;
@@ -39,20 +42,29 @@ public class Stopwatch extends AbsClock {
     public Stopwatch(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mStopwatchDrawable = new StopwatchDrawable();
+        final int colorPrimary = getThemeIntAttribute(R.attr.colorPrimary);
+        final int colorPrimaryDark = getThemeIntAttribute(R.attr.colorPrimaryDark);
+        final int colorAccent = getThemeIntAttribute(R.attr.colorAccent);
+        final int colorCenter = getCentralColor(colorPrimary, colorAccent);
+        final int colorBackgroundFloating = getThemeIntAttribute(R.attr.colorBackgroundFloating);
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.Stopwatch);
-        final int dialColor = array.getColor(R.styleable.Stopwatch_dialColor, getThemeIntAttribute(R.attr.colorBackgroundFloating));
-        mStopwatchDrawable.setDialColor(dialColor);
-        final int secColor = array.getColor(R.styleable.Stopwatch_secondHandColor, getThemeIntAttribute(R.attr.colorAccent));
-        mStopwatchDrawable.setSecondHandColor(secColor);
-        final int minColor = array.getColor(R.styleable.Stopwatch_minuteHandColor, getThemeIntAttribute(R.attr.colorPrimaryDark));
-        mStopwatchDrawable.setMinuteHandColor(minColor);
-        final int secTextColor = array.getColor(R.styleable.Stopwatch_secondTextColor, getThemeIntAttribute(R.attr.colorPrimary));
-        mStopwatchDrawable.setSecondTextColor(secTextColor);
-        final int millisTextColor = array.getColor(R.styleable.Stopwatch_millisecondTextColor, getThemeIntAttribute(R.attr.colorAccent));
-        mStopwatchDrawable.setMillisTextColor(millisTextColor);
-        final int minTextColor = array.getColor(R.styleable.Stopwatch_minuteTextColor, getThemeIntAttribute(R.attr.minuteTextColor));
-        mStopwatchDrawable.setMinuteTextColor(minTextColor);
+        final int dialColor = array.getColor(R.styleable.Stopwatch_dialColor, colorBackgroundFloating);
+        final int minColor = array.getColor(R.styleable.Stopwatch_minuteHandColor, colorPrimary);
+        final int secColor = array.getColor(R.styleable.Stopwatch_secondHandColor, colorAccent);
+        final int hourTextColor = array.getColor(R.styleable.Stopwatch_hourTextColor, colorPrimaryDark);
+        final int minTextColor = array.getColor(R.styleable.Stopwatch_minuteTextColor, colorPrimary);
+        final int secTextColor = array.getColor(R.styleable.Stopwatch_secondTextColor, colorAccent);
+        final int millisTextColor = array.getColor(R.styleable.Stopwatch_millisecondTextColor, colorCenter);
         array.recycle();
+        Typeface typeface = Typeface.createFromAsset(context.getAssets(), "fonts/digit_font.ttf");
+        mStopwatchDrawable.setFontTypeFace(typeface);
+        mStopwatchDrawable.setDialColor(dialColor);
+        mStopwatchDrawable.setSecondHandColor(secColor);
+        mStopwatchDrawable.setMinuteHandColor(minColor);
+        mStopwatchDrawable.setHourTextColor(hourTextColor);
+        mStopwatchDrawable.setMinuteTextColor(minTextColor);
+        mStopwatchDrawable.setSecondTextColor(secTextColor);
+        mStopwatchDrawable.setMillisTextColor(millisTextColor);
         setBackground(mStopwatchDrawable);
         mStopwatchModel = new StopwatchModel();
         mStopwatchModel.setStopwatchListener(new StopwatchModel.StopwatchWatcher() {
@@ -164,6 +176,13 @@ public class Stopwatch extends AbsClock {
     protected void onDetachedFromWindow() {
         mStopwatchModel.onDetachFromWindow();
         super.onDetachedFromWindow();
+    }
+
+
+    private static int getCentralColor(@ColorInt int first, @ColorInt int second) {
+        return Color.rgb((Color.red(first) + Color.red(second)) / 2,
+                (Color.green(first) + Color.green(second)) / 2,
+                (Color.blue(first) + Color.blue(second)) / 2);
     }
 
     private static class SavedState extends AbsSavedState {
