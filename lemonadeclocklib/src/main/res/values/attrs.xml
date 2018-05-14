@@ -5,6 +5,7 @@
     <attr name="secondHandColor" format="color" />
     <attr name="minuteHandColor" format="color" />
     <attr name="minuteTextColor" format="color" />
+    <attr name="hourTextColor" format="color" />
 
     <declare-styleable name="Clock">
         <attr name="timeZone" format="string" />
@@ -12,7 +13,7 @@
         <attr name="hourHandColor" format="color" />
         <attr name="minuteHandColor" />
         <attr name="secondHandColor" />
-        <attr name="hourTextColor" format="color" />
+        <attr name="hourTextColor" />
         <attr name="minuteTextColor" />
         <attr name="amPmTextColor" format="color" />
         <attr name="support12Format" format="boolean" />
@@ -22,6 +23,7 @@
         <attr name="dialColor" />
         <attr name="secondHandColor" />
         <attr name="minuteHandColor" />
+        <attr name="hourTextColor" />
         <attr name="minuteTextColor" />
         <attr name="secondTextColor" format="color" />
         <attr name="millisecondTextColor" format="color" />
