@@ -1,8 +1,11 @@
 package com.creator.lemonade.clock.base;
 
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.graphics.Shader;
+import android.graphics.SweepGradient;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
@@ -15,6 +18,8 @@ import android.support.annotation.NonNull;
 @SuppressWarnings("unused")
 public abstract class AbsClockDrawable extends Drawable {
 
+    private static final int[] SWEEP_COLORS = new int[3];
+    private static final float[] COLOR_POSITIONS = {0, 0.5f, 1};
     private int mHeight;
     private int mWidth;
     private int mShortAxisLength;
@@ -61,7 +66,6 @@ public abstract class AbsClockDrawable extends Drawable {
     }
 
 
-
     /**
      * Calculates the offset of the text central axis
      *
@@ -71,5 +75,18 @@ public abstract class AbsClockDrawable extends Drawable {
     protected static float calculateTextVerticalOffset(@NonNull Paint textPaint) {
         Paint.FontMetrics metrics = textPaint.getFontMetrics();
         return -(metrics.descent + metrics.ascent) / 2f;
+    }
+
+
+    /**
+     * Create a sweep gradient shader
+     *
+     * @param mainColor the main color of shader
+     * @return The {@link SweepGradient}
+     */
+    protected static Shader createSweepShader(int mainColor) {
+        SWEEP_COLORS[0] = SWEEP_COLORS[2] = mainColor;
+        SWEEP_COLORS[1] = Color.argb(0, Color.red(mainColor), Color.green(mainColor), Color.blue(mainColor));
+        return new SweepGradient(0, 0, SWEEP_COLORS, COLOR_POSITIONS);
     }
 }

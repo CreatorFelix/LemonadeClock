@@ -77,9 +77,6 @@ public class ClockDrawable extends AbsClockDrawable {
     private float mMinuteDeg;
     private float mSecondDeg;
 
-    private final int[] mSweepColors = new int[3];
-    private final float[] mColorPositions = {0, 0.5f, 1};
-
     private String mAmPmStrings[];
     private String mHour;
     private String mMinute;
@@ -163,12 +160,13 @@ public class ClockDrawable extends AbsClockDrawable {
     protected void onBoundsChange(Rect bounds) {
         super.onBoundsChange(bounds);
         final int shortAxis = getShortAxisLength();
-        mDialRadius = shortAxis * 0.5f;
-        final float hourHandStrokeWidth = mDialRadius * 0.2f;
+        final float halfShortAxis = shortAxis * 0.5f;
+        mDialRadius = halfShortAxis;
+        final float hourHandStrokeWidth = halfShortAxis * 0.2f;
         setHourHandStrokeWidth(hourHandStrokeWidth);
-        final float minuteHandStrokeWidth = mDialRadius * 0.13f;
+        final float minuteHandStrokeWidth = halfShortAxis * 0.13f;
         setMinuteHandStrokeWidth(minuteHandStrokeWidth);
-        final float secondHandStrokeWidth = mDialRadius * 0.06f;
+        final float secondHandStrokeWidth = halfShortAxis * 0.06f;
         setSecondHandStrokeWidth(secondHandStrokeWidth);
         final float hourTextSize = shortAxis * 0.17f;
         setHourTextSize(hourTextSize);
@@ -177,7 +175,7 @@ public class ClockDrawable extends AbsClockDrawable {
         final float amPmTextSize = shortAxis * 0.08f;
         setAmPmTextSize(amPmTextSize);
         mTextDistance = shortAxis * 0.025f;
-        mHourRadius = mDialRadius * 0.95f - hourHandStrokeWidth * 0.5f;
+        mHourRadius = halfShortAxis * 0.95f - hourHandStrokeWidth * 0.5f;
         mMinuteRadius = mHourRadius - hourHandStrokeWidth * 0.5f + minuteHandStrokeWidth * 0.5f;
         mSecondRadius = mHourRadius - hourHandStrokeWidth * 0.5f + secondHandStrokeWidth * 0.5f;
         mAmPmTranslateY = shortAxis * 0.18f;
@@ -252,18 +250,6 @@ public class ClockDrawable extends AbsClockDrawable {
             canvas.drawText(mAmPm, 0, mAmPmVerticalOffset, mAmPmTextPaint);
             canvas.restore();
         }
-    }
-
-    /**
-     * Create a sweep gradient shader
-     *
-     * @param mainColor the main color of shader
-     * @return The {@link SweepGradient}
-     */
-    private Shader createSweepShader(int mainColor) {
-        mSweepColors[0] = mSweepColors[2] = mainColor;
-        mSweepColors[1] = Color.argb(0, Color.red(mainColor), Color.green(mainColor), Color.blue(mainColor));
-        return new SweepGradient(0, 0, mSweepColors, mColorPositions);
     }
 
     @Override
