@@ -105,7 +105,7 @@ public class Ticker {
     }
 
     /**
-     * This method should be called when the view in which ticker lives has been attached to window.
+     * This method should be called when the view in which this ticker lives has been attached to window
      *
      * @param handler handler from ui thread
      * @see View#onAttachedToWindow()
@@ -117,7 +117,7 @@ public class Ticker {
     }
 
     /**
-     * This method should be called when the view in which ticker lives has been detached window.
+     * This method should be called when the view in which this ticker lives has been detached window
      *
      * @see View#onDetachedFromWindow()
      */
