@@ -129,7 +129,6 @@ public class Ticker {
 
     private void registerReceiver() {
         final IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_TIME_TICK);
         filter.addAction(Intent.ACTION_TIME_CHANGED);
         filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
         mContext.registerReceiver(mIntentReceiver, filter, null, mHandler);
