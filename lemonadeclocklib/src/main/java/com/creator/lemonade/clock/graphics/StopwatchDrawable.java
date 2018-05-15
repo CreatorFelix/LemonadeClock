@@ -364,5 +364,6 @@ public class StopwatchDrawable extends AbsClockDrawable {
         mMinuteTextPaint.setTypeface(typeface);
         mSecondTextPaint.setTypeface(typeface);
         mMillisTextPaint.setTypeface(typeface);
+        invalidateSelf();
     }
 }
