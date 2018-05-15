@@ -5,15 +5,19 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.view.View;
 
 /**
- * As a model of stopwatch, this class defines the basic logic and keeps the state of stopwatch
+ * As a model of stopwatch, this class defines the basic logic and holds the state of stopwatch.
  *
  * @author Felix.Liang
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class StopwatchModel {
 
+    /**
+     * The delayed time between two time updates.
+     */
     private static final long UPDATE_DELAY_TIME = 30;
 
     private Handler mHandler;
@@ -22,8 +26,14 @@ public class StopwatchModel {
 
     private StopwatchWatcher mStopwatchWatcher;
 
+    /**
+     * Field that indicates whether the stopwatch is running
+     */
     private boolean mRunning;
 
+    /**
+     * @see #setSuspend(boolean)
+     */
     private boolean mSuspend;
 
     private final Runnable mTick = new Runnable() {
@@ -44,16 +54,34 @@ public class StopwatchModel {
         if (mStopwatchWatcher != null) mStopwatchWatcher.onTimeChanged(getStopwatchTime());
     }
 
-    public void onAttachToWindow(@NonNull Handler handler) {
+    /**
+     * This method should be called when the view in which this stopwatch model lives
+     * has been attached to a window.
+     *
+     * @param handler handler from ui thread
+     * @see View#onAttachedToWindow()
+     */
+    public void onAttachedToWindow(@NonNull Handler handler) {
         mHandler = handler;
     }
 
-    public void onDetachFromWindow() {
+    /**
+     * This method should be called when the view in which this stopwatch model lives
+     * has been detached from a window.
+     *
+     * @see View#onDetachedFromWindow()
+     */
+    public void onDetachedFromWindow() {
         setSuspend(true);
         mHandler.removeCallbacks(mTick);
         updateRunning();
     }
 
+    /**
+     * Sets whether to suspend the update of stopwatch.
+     *
+     * @param suspend true for suspend, false otherwise
+     */
     public void setSuspend(boolean suspend) {
         if (mSuspend != suspend) {
             mSuspend = suspend;
@@ -61,6 +89,9 @@ public class StopwatchModel {
         }
     }
 
+    /**
+     * Starts or resumes the stopwatch.
+     */
     public void startOrResume() {
         if (!isStarted()) {
             start();
@@ -69,10 +100,20 @@ public class StopwatchModel {
         }
     }
 
+    /**
+     * Starts the stopwatch.
+     *
+     * @see #startOrResume()
+     */
     private void start() {
         setStarted(true);
     }
 
+    /**
+     * Resumes the stopwatch if it is paused.
+     *
+     * @see #startOrResume()
+     */
     private void resume() {
         if (isPaused()) {
             final long pauseTime = mState.pause;
@@ -84,6 +125,9 @@ public class StopwatchModel {
         }
     }
 
+    /**
+     * Pauses the stopwatch. Nothing happens if the stopwatch isn't started or has been paused.
+     */
     public void pause() {
         if (isStarted() && !isPaused()) {
             mState.pause = getElapsedTime();
@@ -93,6 +137,11 @@ public class StopwatchModel {
         }
     }
 
+    /**
+     * Gets current time of stopwatch.
+     *
+     * @return time in milliseconds
+     */
     private long getStopwatchTime() {
         if (!isStarted()) return StopwatchState.DEFAULT_TIME;
         if (isPaused()) {
@@ -102,6 +151,12 @@ public class StopwatchModel {
         }
     }
 
+    /**
+     * Get milliseconds since boot.
+     *
+     * @return milliseconds since boot
+     * @see SystemClock#elapsedRealtime()
+     */
     private long getElapsedTime() {
         return SystemClock.elapsedRealtime();
     }
@@ -118,20 +173,36 @@ public class StopwatchModel {
         }
     }
 
+    /**
+     * Adds a lap. This method will call {@link StopwatchWatcher#onLap(long)}.
+     */
     public void lap() {
         if (mStopwatchWatcher != null) {
             mStopwatchWatcher.onLap(getStopwatchTime());
         }
     }
 
+    /**
+     * Indicates whether this stopwatch has been started.
+     *
+     * @return true if has been started, false otherwise
+     */
     public boolean isStarted() {
         return mState.started;
     }
 
+    /**
+     * Indicates whether this stopwatch has been paused.
+     *
+     * @return true if has been paused, false otherwise
+     */
     public boolean isPaused() {
         return mState.started && mState.pause != StopwatchState.DEFAULT_TIME;
     }
 
+    /**
+     * Resets the stopwatch.
+     */
     public void reset() {
         setStarted(false);
         mState.clear();
@@ -151,10 +222,20 @@ public class StopwatchModel {
         }
     }
 
+    /**
+     * Gets the holding state of this stopwatch.
+     *
+     * @return The {@link StopwatchState} instance
+     */
     public StopwatchState getState() {
         return mState;
     }
 
+    /**
+     * Sets the state of this stopwatch.
+     *
+     * @param ss The target state
+     */
     public void setState(StopwatchState ss) {
         mState = new StopwatchState(ss);
         if (mStopwatchWatcher != null) {
@@ -164,12 +245,20 @@ public class StopwatchModel {
         updateRunning();
     }
 
+    /**
+     * Register a callback to be invoked when the state of a stopwatch is changed
+     *
+     * @param watcher The callback to run
+     */
     public void setStopwatchListener(StopwatchWatcher watcher) {
         if (mStopwatchWatcher != watcher) {
             mStopwatchWatcher = watcher;
         }
     }
 
+    /**
+     * Interface definition for a callback to be invoked the state of a stopwatch is changed.
+     */
     public interface StopwatchWatcher {
 
         void onTimeChanged(long timeInMillis);
@@ -179,11 +268,33 @@ public class StopwatchModel {
         void onLap(long lapTimeInMillis);
     }
 
+    /**
+     * A Parcelable implementation that used to hold the state of stopwatch.
+     */
     public static class StopwatchState implements Parcelable {
 
+        /**
+         * A constant that used to define the default time
+         */
         private static final int DEFAULT_TIME = 0;
+
+        /**
+         * Field that used to hold the elapsed real time at the start of stopwatch.
+         *
+         * @see SystemClock#elapsedRealtime()
+         */
         private long base = DEFAULT_TIME;
+
+        /**
+         * Field that used to hold the elapsed real time at the pause of stopwatch.
+         *
+         * @see SystemClock#elapsedRealtime()
+         */
         private long pause = DEFAULT_TIME;
+
+        /**
+         * Field that indicates whether the stopwatch has been started.
+         */
         private boolean started;
 
         private StopwatchState() {
@@ -203,6 +314,9 @@ public class StopwatchModel {
             pause = in.readLong();
         }
 
+        /**
+         * Clears the holding state
+         */
         private void clear() {
             started = false;
             base = DEFAULT_TIME;
