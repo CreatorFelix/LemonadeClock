@@ -119,7 +119,7 @@ public class Stopwatch extends AbsClock {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        mStopwatchModel.onAttachToWindow(getHandler());
+        mStopwatchModel.onAttachedToWindow(getHandler());
     }
 
     @Override
@@ -174,7 +174,7 @@ public class Stopwatch extends AbsClock {
 
     @Override
     protected void onDetachedFromWindow() {
-        mStopwatchModel.onDetachFromWindow();
+        mStopwatchModel.onDetachedFromWindow();
         super.onDetachedFromWindow();
     }
 
