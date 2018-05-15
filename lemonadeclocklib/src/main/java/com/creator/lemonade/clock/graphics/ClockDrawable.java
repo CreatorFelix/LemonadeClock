@@ -1,12 +1,9 @@
 package com.creator.lemonade.clock.graphics;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Shader;
-import android.graphics.SweepGradient;
 import android.graphics.Typeface;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
