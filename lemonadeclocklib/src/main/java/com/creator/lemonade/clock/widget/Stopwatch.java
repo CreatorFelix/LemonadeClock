@@ -17,7 +17,20 @@ import com.creator.lemonade.clock.graphics.StopwatchDrawable;
 import com.creator.lemonade.clock.util.StopwatchModel;
 
 /**
- * A stopwatch widget
+ * This stopwatch widget provides the following methods to control the running of stopwatch:
+ * <ul>
+ * <li>{@link #startOrResume()}
+ * <li>{@link #pause()}
+ * <li>{@link #lap()}
+ * <li>{@link #reset()}
+ * </ul>
+ * <br>
+ * Also you can use the following methods to judge the state of the stopwatch:
+ * <ul>
+ * <li>{@link #isStarted()}
+ * <li>{@link #isPaused()}
+ * </ul>
+ * A callback class {@link StopwatchListener} is used to deal with some tasks from outside.
  *
  * @author Felix.Liang
  */
@@ -29,8 +42,14 @@ public class Stopwatch extends AbsClock {
      */
     private static final String LOG_TAG = "Lemonade_Stopwatch";
 
+    /**
+     * A {@link StopwatchModel} controls the running of stopwatch
+     */
     private final StopwatchModel mStopwatchModel;
 
+    /**
+     * A {@link StopwatchDrawable} defines the drawing of stopwatch
+     */
     private final StopwatchDrawable mStopwatchDrawable;
 
     private StopwatchListener mStopwatchListener;
@@ -86,34 +105,73 @@ public class Stopwatch extends AbsClock {
         });
     }
 
+    /**
+     * Register a callback to be invoked when the state of a stopwatch is changed
+     *
+     * @param listener the callback to run
+     */
     public void setStopwatchListener(StopwatchListener listener) {
         if (mStopwatchListener != listener) {
             mStopwatchListener = listener;
         }
     }
 
+    /**
+     * Interface definition for a callback to be invoked the state of a stopwatch is changed.
+     */
+    public interface StopwatchListener {
+
+        /**
+         * Called when the time of stopwatch changes.
+         *
+         * @param timeInMillis the time of stopwatch in milliseconds
+         */
+        void onTimeChanged(long timeInMillis);
+
+        /**
+         * Called when the state of stopwatch changes.
+         *
+         * @param started true if the stopwatch has been started, false otherwise
+         * @param paused  true if the stopwatch has been paused, false otherwise
+         */
+        void onStateChanged(boolean started, boolean paused);
+
+        /**
+         * Called when a lap is added.
+         *
+         * @param lapTimeInMillis current time of stopwatch in milliseconds
+         * @see #lap()
+         */
+        void onLap(long lapTimeInMillis);
+    }
+
+    /**
+     * This adapter class provides empty implementations of the methods from {@link StopwatchListener}.
+     * Any custom listener that cares only about a subset of the methods of this listener can
+     * simply subclass this adapter class instead of implementing the interface directly.
+     */
     public static abstract class StopwatchListenerAdapter implements StopwatchListener {
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void onTimeChanged(long timeInMillis) {
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void onStateChanged(boolean started, boolean paused) {
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void onLap(long lapTimeInMillis) {
         }
-    }
-
-    public interface StopwatchListener {
-
-        void onTimeChanged(long timeInMillis);
-
-        void onStateChanged(boolean started, boolean paused);
-
-        void onLap(long lapTimeInMillis);
     }
 
     @Override
@@ -139,26 +197,51 @@ public class Stopwatch extends AbsClock {
         mStopwatchModel.setSuspend(visibility != VISIBLE);
     }
 
+    /**
+     * Convenience method to start or stop the stopwatch.
+     */
     public void startOrResume() {
         mStopwatchModel.startOrResume();
     }
 
+    /**
+     * Convenience method to pause the stopwatch.
+     */
     public void pause() {
         mStopwatchModel.pause();
     }
 
+    /**
+     * Convenience method to add a lap. We can deal with the result by setting a {@link StopwatchListener} callback,
+     * because {@link StopwatchListener#onLap(long)} will be called.
+     *
+     * @see #setStopwatchListener(StopwatchListener)
+     */
     public void lap() {
         mStopwatchModel.lap();
     }
 
+    /**
+     * Convenience method to reset the stopwatch.
+     */
     public void reset() {
         mStopwatchModel.reset();
     }
 
+    /**
+     * Indicates whether this stopwatch has been paused.
+     *
+     * @return true if has been paused, false otherwise
+     */
     public boolean isPaused() {
         return mStopwatchModel.isPaused();
     }
 
+    /**
+     * Indicates whether this stopwatch has been started.
+     *
+     * @return true if has been started, false otherwise
+     */
     public boolean isStarted() {
         return mStopwatchModel.isStarted();
     }
@@ -178,14 +261,26 @@ public class Stopwatch extends AbsClock {
         super.onDetachedFromWindow();
     }
 
-
+    /**
+     * Gets the central color between two colors.
+     *
+     * @param first  the first color
+     * @param second the second color
+     * @return the central color
+     */
     private static int getCentralColor(@ColorInt int first, @ColorInt int second) {
         return Color.rgb((Color.red(first) + Color.red(second)) / 2,
                 (Color.green(first) + Color.green(second)) / 2,
                 (Color.blue(first) + Color.blue(second)) / 2);
     }
 
-    private static class SavedState extends AbsSavedState {
+    /**
+     * This is the persistent state that is saved by Stopwatch.  Only needed
+     * if you are creating a subclass of Stopwatch that must save its own
+     * state, in which case it should implement a subclass of this which
+     * contains that state.
+     */
+    public static class SavedState extends AbsSavedState {
 
         public static final Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
             @Override
