@@ -30,6 +30,7 @@ import com.creator.lemonade.clock.util.StopwatchModel;
  * <li>{@link #isStarted()}
  * <li>{@link #isPaused()}
  * </ul>
+ * <br>
  * A callback class {@link StopwatchListener} is used to deal with some tasks from outside.
  *
  * @author Felix.Liang
