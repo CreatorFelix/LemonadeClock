@@ -15,7 +15,7 @@ import com.creator.lemonade.clock.base.AbsClockDrawable;
 import java.util.Locale;
 
 /**
- * This Class defines how to draw a stopwatch
+ * This Class defines how to draw a stopwatch.
  *
  * @author Felix.Liang
  */
@@ -59,6 +59,7 @@ public class StopwatchDrawable extends AbsClockDrawable {
     private float mSecondHandRadius;
     private float mMinuteHandRadius;
     private float mTextExtraSpace;
+
     private float mSecondDeg;
     private float mMinuteDeg;
 
@@ -85,6 +86,11 @@ public class StopwatchDrawable extends AbsClockDrawable {
         mMillisTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     }
 
+    /**
+     * Specify the time of stopwatch.
+     *
+     * @param timeInMillis time in milliseconds
+     */
     public void setTime(long timeInMillis) {
         if (mCurrentTime != timeInMillis) {
             mCurrentTime = timeInMillis;
@@ -92,6 +98,9 @@ public class StopwatchDrawable extends AbsClockDrawable {
         }
     }
 
+    /**
+     * Called when the time of stopwatch is changed.
+     */
     private void onTimeChanged() {
         final long timeInMillis = mCurrentTime;
         final long millis = timeInMillis % 1000;
@@ -115,6 +124,9 @@ public class StopwatchDrawable extends AbsClockDrawable {
         invalidateSelf();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onBoundsChange(Rect bounds) {
         super.onBoundsChange(bounds);
@@ -130,6 +142,9 @@ public class StopwatchDrawable extends AbsClockDrawable {
         mTextExtraSpace = (mMinuteHandRadius * 2 - minuteHandStrokeWidth) * 0.9f;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void draw(@NonNull Canvas canvas) {
         canvas.translate(getWidth() / 2, getHeight() / 2);
@@ -141,15 +156,30 @@ public class StopwatchDrawable extends AbsClockDrawable {
         drawTextTime(canvas);
     }
 
+    /**
+     * Draw the dial of stopwatch.
+     *
+     * @param canvas The canvas to draw into
+     */
     private void drawDial(Canvas canvas) {
         canvas.drawCircle(0, 0, mDialRadius, mDialPaint);
     }
 
+    /**
+     * Draw all the hands.
+     *
+     * @param canvas The canvas to draw into
+     */
     private void drawHands(Canvas canvas) {
         drawMinuteHand(canvas);
         drawSecondHand(canvas);
     }
 
+    /**
+     * Draw the minute hand.
+     *
+     * @param canvas The canvas to draw into
+     */
     private void drawMinuteHand(Canvas canvas) {
         canvas.save();
         canvas.rotate(mMinuteDeg);
@@ -158,6 +188,11 @@ public class StopwatchDrawable extends AbsClockDrawable {
         canvas.restore();
     }
 
+    /**
+     * Draw the second hand.
+     *
+     * @param canvas The canvas to draw into
+     */
     private void drawSecondHand(Canvas canvas) {
         canvas.save();
         canvas.rotate(mSecondDeg);
@@ -166,6 +201,11 @@ public class StopwatchDrawable extends AbsClockDrawable {
         canvas.restore();
     }
 
+    /**
+     * Draw the time text.
+     *
+     * @param canvas The canvas to draw into
+     */
     private void drawTextTime(Canvas canvas) {
         canvas.save();
         final float totalWidth = mTextExtraSpace;
@@ -188,7 +228,7 @@ public class StopwatchDrawable extends AbsClockDrawable {
             setHourTextSize(textSize);
             setMinuteTextSize(textSize);
             setSecondTextSize(textSize);
-            setMillisTextSize(textSize * 0.7f);
+            setMillisTextSize(textSize * 0.6f);
             drawTextHour(canvas);
             canvas.translate((hourLength + 0.2f) * charWidth, 0);
             drawTextMinute(canvas);
@@ -200,28 +240,51 @@ public class StopwatchDrawable extends AbsClockDrawable {
         canvas.restore();
     }
 
+    /**
+     * Draw the hour text.
+     *
+     * @param canvas The canvas to draw into
+     */
     private void drawTextHour(Canvas canvas) {
         canvas.drawText(mHour, 0, mHourTextOffset, mHourTextPaint);
     }
 
+    /**
+     * Draw the minute text.
+     *
+     * @param canvas The canvas to draw into
+     */
     private void drawTextMinute(Canvas canvas) {
         if (mMinute != null) {
             canvas.drawText(mMinute, 0, mMinTextOffset, mMinuteTextPaint);
         }
     }
 
+    /**
+     * Draw the second text.
+     *
+     * @param canvas The canvas to draw into
+     */
     private void drawTextSecond(Canvas canvas) {
         if (mSecond != null) {
             canvas.drawText(mSecond, 0, mSecTextOffset, mSecondTextPaint);
         }
     }
 
+    /**
+     * Draw the milliseconds text.
+     *
+     * @param canvas The canvas to draw into
+     */
     private void drawTextMillisecond(Canvas canvas) {
         if (mMillisecond != null) {
             canvas.drawText(mMillisecond, 0, mMillisTextOffset, mMillisTextPaint);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setAlpha(int alpha) {
         mDialPaint.setAlpha(alpha);
@@ -234,6 +297,9 @@ public class StopwatchDrawable extends AbsClockDrawable {
         invalidateSelf();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setColorFilter(@Nullable ColorFilter colorFilter) {
         mDialPaint.setColorFilter(colorFilter);
@@ -246,6 +312,11 @@ public class StopwatchDrawable extends AbsClockDrawable {
         invalidateSelf();
     }
 
+    /**
+     * Specify the color of minute hand.
+     *
+     * @param newColor The new color
+     */
     public void setMinuteHandColor(int newColor) {
         if (mColorMinuteHand != newColor) {
             mMinuteHandPaint.setShader(createSweepShader(newColor));
@@ -254,6 +325,11 @@ public class StopwatchDrawable extends AbsClockDrawable {
         }
     }
 
+    /**
+     * Specify the color of second hand.
+     *
+     * @param newColor The new color
+     */
     public void setSecondHandColor(@ColorInt int newColor) {
         if (mColorSecondHand != newColor) {
             mSecondHandPaint.setShader(createSweepShader(newColor));
@@ -262,6 +338,11 @@ public class StopwatchDrawable extends AbsClockDrawable {
         }
     }
 
+    /**
+     * Specify the background color of dial.
+     *
+     * @param newColor The new color
+     */
     public void setDialColor(@ColorInt int newColor) {
         if (mColorDial != newColor) {
             mDialPaint.setColor(newColor);
@@ -270,6 +351,11 @@ public class StopwatchDrawable extends AbsClockDrawable {
         }
     }
 
+    /**
+     * Specify the text color of second text.
+     *
+     * @param newColor The new text color
+     */
     public void setSecondTextColor(@ColorInt int newColor) {
         if (mColorSecondText != newColor) {
             mSecondTextPaint.setColor(newColor);
@@ -278,6 +364,11 @@ public class StopwatchDrawable extends AbsClockDrawable {
         }
     }
 
+    /**
+     * Specify the text color of millisecond text.
+     *
+     * @param newColor The new text color
+     */
     public void setMillisTextColor(@ColorInt int newColor) {
         if (mColorMillisText != newColor) {
             mMillisTextPaint.setColor(newColor);
@@ -286,6 +377,11 @@ public class StopwatchDrawable extends AbsClockDrawable {
         }
     }
 
+    /**
+     * Specify the text color of minute text.
+     *
+     * @param newColor The new text color
+     */
     public void setMinuteTextColor(@ColorInt int newColor) {
         if (mColorMinuteText != newColor) {
             mMinuteTextPaint.setColor(newColor);
@@ -294,6 +390,11 @@ public class StopwatchDrawable extends AbsClockDrawable {
         }
     }
 
+    /**
+     * Specify the text color of hour text.
+     *
+     * @param newColor The new text color
+     */
     public void setHourTextColor(@ColorInt int newColor) {
         if (mColorHourText != newColor) {
             mHourTextPaint.setColor(newColor);
@@ -302,6 +403,11 @@ public class StopwatchDrawable extends AbsClockDrawable {
         }
     }
 
+    /**
+     * Specify the text size of the hour text.
+     *
+     * @param newSize The new text size
+     */
     private void setHourTextSize(float newSize) {
         if (mHourTextSize != newSize) {
             mHourTextPaint.setTextSize(newSize);
@@ -311,6 +417,11 @@ public class StopwatchDrawable extends AbsClockDrawable {
         }
     }
 
+    /**
+     * Specify the text size of the minute text.
+     *
+     * @param newSize The new text size
+     */
     private void setMinuteTextSize(float newSize) {
         if (mMinuteTextSize != newSize) {
             mMinuteTextPaint.setTextSize(newSize);
@@ -320,6 +431,11 @@ public class StopwatchDrawable extends AbsClockDrawable {
         }
     }
 
+    /**
+     * Specify the text size of the second text.
+     *
+     * @param newSize The new text size
+     */
     private void setSecondTextSize(float newSize) {
         if (mSecondTextSize != newSize) {
             mSecondTextPaint.setTextSize(newSize);
@@ -329,6 +445,11 @@ public class StopwatchDrawable extends AbsClockDrawable {
         }
     }
 
+    /**
+     * Specify the text size of the milliseconds text.
+     *
+     * @param newSize The new text size
+     */
     private void setMillisTextSize(float newSize) {
         if (mMillisTextSize != newSize) {
             mMillisTextPaint.setTextSize(newSize);
@@ -338,6 +459,11 @@ public class StopwatchDrawable extends AbsClockDrawable {
         }
     }
 
+    /**
+     * Specify the stroke width of second hand.
+     *
+     * @param strokeWidth The new stroke width
+     */
     private void setSecondHandStrokeWidth(float strokeWidth) {
         if (mSecStrokeWidth != strokeWidth) {
             mSecondHandPaint.setStrokeWidth(strokeWidth);
@@ -346,6 +472,11 @@ public class StopwatchDrawable extends AbsClockDrawable {
         }
     }
 
+    /**
+     * Specify the stroke width of minute hand.
+     *
+     * @param strokeWidth The new stroke width
+     */
     private void setMinuteHandStrokeWidth(float strokeWidth) {
         if (mMinStrokeWidth != strokeWidth) {
             mMinuteHandPaint.setStrokeWidth(strokeWidth);
@@ -355,7 +486,7 @@ public class StopwatchDrawable extends AbsClockDrawable {
     }
 
     /**
-     * Sets the stopwatch font typeface
+     * Specify the stopwatch font typeface.
      *
      * @param typeface The {@link Typeface} of font
      */
