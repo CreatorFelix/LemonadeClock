@@ -2,7 +2,6 @@ package com.creator.lemonade.sample.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -11,7 +10,7 @@ import android.widget.Toast;
 import com.creator.lemonade.clock.widget.Stopwatch;
 import com.creator.lemonade.sample.R;
 
-public class StopwatchActivity extends AppCompatActivity implements View.OnClickListener {
+public class StopwatchActivity extends BaseDemoActivity implements View.OnClickListener {
 
     private Stopwatch mStopwatch;
     private Button mBtnStart;

@@ -29,6 +29,9 @@
         <activity
             android:name=".activity.StopwatchActivity"
             android:label="@string/label_demo_stopwatch" />
+        <activity
+            android:name=".activity.TimerActivity"
+            android:label="@string/label_demo_timer" />
     </application>
 
 </manifest>
