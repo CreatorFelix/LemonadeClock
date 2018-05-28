@@ -55,7 +55,7 @@ public class StopwatchModel {
     /**
      * This method should be called when this stopwatch attaches to its environment.
      *
-     * @param handler handler
+     * @param handler handler to handle messages
      */
     public void attach(@NonNull Handler handler) {
         mHandler = handler;
