@@ -96,12 +96,12 @@ public class Clock extends AbsClock {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        mTicker.onAttachedToWindow(getHandler());
+        mTicker.attach(getHandler());
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        mTicker.onDetachedFromWindow();
+        mTicker.detach();
     }
 }

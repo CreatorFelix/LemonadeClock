@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.view.View;
 
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -105,23 +104,20 @@ public class Ticker {
     }
 
     /**
-     * This method should be called when the view in which this ticker lives has been attached to window
+     * This method should be called when this ticker attach to its environment.
      *
-     * @param handler handler from ui thread
-     * @see View#onAttachedToWindow()
+     * @param handler handler
      */
-    public void onAttachedToWindow(@NonNull Handler handler) {
+    public void attach(@NonNull Handler handler) {
         mHandler = handler;
         setUpdating(true);
         registerReceiver();
     }
 
     /**
-     * This method should be called when the view in which this ticker lives has been detached window
-     *
-     * @see View#onDetachedFromWindow()
+     * This method should be called when this ticker detach from its environment.
      */
-    public void onDetachedFromWindow() {
+    public void detach() {
         unRegisterReceiver();
         setUpdating(false);
         mOnTimeUpdateListener = null;
