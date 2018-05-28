@@ -5,7 +5,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
-import android.view.View;
 
 /**
  * As a model of stopwatch, this class defines the basic logic and holds the state of stopwatch.
@@ -55,23 +54,18 @@ public class StopwatchModel {
     }
 
     /**
-     * This method should be called when the view in which this stopwatch model lives
-     * has been attached to a window.
+     * This method should be called when this stopwatch attaches to its environment.
      *
-     * @param handler handler from ui thread
-     * @see View#onAttachedToWindow()
+     * @param handler handler
      */
-    public void onAttachedToWindow(@NonNull Handler handler) {
+    public void attach(@NonNull Handler handler) {
         mHandler = handler;
     }
 
     /**
-     * This method should be called when the view in which this stopwatch model lives
-     * has been detached from a window.
-     *
-     * @see View#onDetachedFromWindow()
+     * This method should be called when this stopwatch detaches from its environment.
      */
-    public void onDetachedFromWindow() {
+    public void detach() {
         setSuspend(true);
         mHandler.removeCallbacks(mTick);
         updateRunning();
