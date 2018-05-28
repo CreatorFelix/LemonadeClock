@@ -6,6 +6,11 @@ import android.os.Parcelable;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 
+/**
+ * This class defines the basic logic and holds the state of a timer.
+ *
+ * @author Felix.Liang
+ */
 public class TimerModel {
 
     /**
@@ -24,13 +29,15 @@ public class TimerModel {
      */
     private boolean mRunning;
 
+    /**
+     * @see #setSuspend(boolean)
+     */
     private boolean mSuspend;
 
     private final Runnable mTick = new Runnable() {
         @Override
         public void run() {
-            if (mHandler != null) {
-                onTimeChanged();
+            if (mHandler != null && onTimeChanged()) {
                 mHandler.postDelayed(mTick, UPDATE_DELAY_TIME);
             }
         }
@@ -40,11 +47,16 @@ public class TimerModel {
         mState = new TimerState();
     }
 
-    private void onTimeChanged() {
+    private boolean onTimeChanged() {
+        final long restTime = getTimerRestTime();
+        if (mTimerWatcher != null) {
+            mTimerWatcher.onTimeChanged(restTime, mState.total);
+        }
+        return restTime > 0;
     }
 
     /**
-     * This method should be called when this timer attaches to its environment.
+     * This method should be called when this timer model attaches to its environment.
      *
      * @param handler handler to handle messages
      */
@@ -53,7 +65,7 @@ public class TimerModel {
     }
 
     /**
-     * This method should be called when this timer detaches from its environment.
+     * This method should be called when this timer model detaches from its environment.
      */
     public void detach() {
         setSuspend(true);
@@ -73,8 +85,24 @@ public class TimerModel {
         }
     }
 
+    /**
+     * Gets the holding state of this timer model.
+     *
+     * @return The {@link TimerState} instance
+     */
     public TimerState getState() {
         return mState;
+    }
+
+    private void setStarted(boolean started) {
+        if (mState.started != started) {
+            mState.started = started;
+            if (started) {
+                mState.base = getCurrentElapsedTime();
+            }
+            performStateChanged();
+            updateRunning();
+        }
     }
 
     private void updateRunning() {
@@ -89,12 +117,130 @@ public class TimerModel {
         }
     }
 
+    /**
+     * Gets the rest time of this timer model.
+     *
+     * @return rest time in milliseconds
+     */
+    private long getTimerRestTime() {
+        if (!isStarted()) return TimerState.DEFAULT_TIME;
+        if (mState.base == TimerState.DEFAULT_TIME) {
+            throw new IllegalStateException("Base time has not been initialized.");
+        }
+        final long totalTime = mState.total;
+        if (isPaused()) {
+            final long timeFromPause = mState.pause - mState.base;
+            if (timeFromPause < 0 || timeFromPause > totalTime) {
+                throw new IllegalStateException("Illegal timer state: " + mState.toString());
+            }
+            return totalTime - timeFromPause;
+        } else {
+            long elapsedFromBase = getCurrentElapsedTime() - mState.base;
+            if (elapsedFromBase < 0) {
+                throw new IllegalStateException("Elapsed time should <= base time: " + mState.toString());
+            }
+            long restTime = totalTime - elapsedFromBase;
+            if (restTime <= 0) {
+                performTimeout();
+                return 0;
+            }
+            return restTime;
+        }
+    }
+
+    /**
+     * @return the milliseconds since boot
+     * @see SystemClock#elapsedRealtime()
+     */
+    private long getCurrentElapsedTime() {
+        return SystemClock.elapsedRealtime();
+    }
+
+    /**
+     * Starts or resumes the timer.
+     */
+    public void startOrResume() {
+        if (!isStarted()) {
+            start();
+        } else {
+            resume();
+        }
+    }
+
+    /**
+     * Starts the timer.
+     *
+     * @see #startOrResume()
+     */
+    private void start() {
+        setStarted(true);
+    }
+
+    /**
+     * Resumes the timer if it is paused.
+     *
+     * @see #startOrResume()
+     */
+    private void resume() {
+        if (isPaused()) {
+            final long elapsedTimeFromPause = getCurrentElapsedTime() - mState.pause;
+            mState.base += elapsedTimeFromPause;
+            mState.pause = TimerState.DEFAULT_TIME;
+            performStateChanged();
+            updateRunning();
+        }
+    }
+
+    /**
+     * Pauses the timer. Nothing happens if the timer isn't started or has been paused.
+     */
+    public void pause() {
+        if (isStarted() && !isPaused()) {
+            mState.pause = getCurrentElapsedTime();
+            performStateChanged();
+            updateRunning();
+        }
+    }
+
+    /**
+     * Call this timer model's TimerWatcher, if it is defined. Performs all the actions
+     * associated with changes of state.
+     */
+    private void performStateChanged() {
+        if (mTimerWatcher != null) {
+            mTimerWatcher.onStateChanged(isStarted(), isPaused());
+        }
+    }
+
+    /**
+     * Call this timer model's TimerWatcher, if it is defined. Performs all the actions
+     * associated with timeout.
+     */
+    private void performTimeout() {
+        if (mTimerWatcher != null) {
+            mTimerWatcher.onTimeout();
+        }
+    }
+
+    public void reset() {
+        setStarted(false);
+        mState.clear();
+        performStateChanged();
+    }
+
+    public void setTotalTime(long totalTime) {
+        if (totalTime > 0 && mState.total != totalTime) {
+            reset();
+            mState.total = totalTime;
+        }
+    }
+
     public boolean isPaused() {
         return mState.started && mState.pause != TimerState.DEFAULT_TIME;
     }
 
     public boolean isStarted() {
-        return mState.started && mState.pause == TimerState.DEFAULT_TIME;
+        return mState.started;
     }
 
     /**
@@ -116,6 +262,8 @@ public class TimerModel {
         void onTimeChanged(long restTime, long totalTime);
 
         void onStateChanged(boolean started, boolean paused);
+
+        void onTimeout();
     }
 
     /**
