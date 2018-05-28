@@ -11,7 +11,6 @@ import android.support.annotation.NonNull;
  *
  * @author Felix.Liang
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
 public class StopwatchModel {
 
     /**
