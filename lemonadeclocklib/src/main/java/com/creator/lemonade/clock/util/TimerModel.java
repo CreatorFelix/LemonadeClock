@@ -1,10 +1,122 @@
 package com.creator.lemonade.clock.util;
 
+import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 
 public class TimerModel {
+
+    /**
+     * The delayed time between two time updates.
+     */
+    private static final long UPDATE_DELAY_TIME = 30;
+
+    private Handler mHandler;
+
+    private TimerState mState;
+
+    private TimerWatcher mTimerWatcher;
+
+    /**
+     * Field that indicates whether the timer is running
+     */
+    private boolean mRunning;
+
+    private boolean mSuspend;
+
+    private final Runnable mTick = new Runnable() {
+        @Override
+        public void run() {
+            if (mHandler != null) {
+                onTimeChanged();
+                mHandler.postDelayed(mTick, UPDATE_DELAY_TIME);
+            }
+        }
+    };
+
+    public TimerModel() {
+        mState = new TimerState();
+    }
+
+    private void onTimeChanged() {
+    }
+
+    /**
+     * This method should be called when this timer attaches to its environment.
+     *
+     * @param handler handler to handle messages
+     */
+    public void attach(@NonNull Handler handler) {
+        mHandler = handler;
+    }
+
+    /**
+     * This method should be called when this timer detaches from its environment.
+     */
+    public void detach() {
+        setSuspend(true);
+        mHandler.removeCallbacks(mTick);
+        updateRunning();
+    }
+
+    /**
+     * Sets whether to suspend the update of timer.
+     *
+     * @param suspend true for suspend, false otherwise
+     */
+    public void setSuspend(boolean suspend) {
+        if (mSuspend != suspend) {
+            mSuspend = suspend;
+            updateRunning();
+        }
+    }
+
+    public TimerState getState() {
+        return mState;
+    }
+
+    private void updateRunning() {
+        final boolean running = isStarted() && !isPaused() && !mSuspend;
+        if (mRunning != running) {
+            if (running) {
+                mHandler.post(mTick);
+            } else {
+                mHandler.removeCallbacks(mTick);
+            }
+            mRunning = running;
+        }
+    }
+
+    public boolean isPaused() {
+        return mState.started && mState.pause != TimerState.DEFAULT_TIME;
+    }
+
+    public boolean isStarted() {
+        return mState.started && mState.pause == TimerState.DEFAULT_TIME;
+    }
+
+    /**
+     * Register a callback to be invoked when the state of a timer is changed
+     *
+     * @param watcher callback to run
+     */
+    public void setTimerListener(TimerWatcher watcher) {
+        if (mTimerWatcher != watcher) {
+            mTimerWatcher = watcher;
+        }
+    }
+
+    /**
+     * Interface definition for a callback to be invoked when the state of a timer is changed.
+     */
+    public interface TimerWatcher {
+
+        void onTimeChanged(long restTime, long totalTime);
+
+        void onStateChanged(boolean started, boolean paused);
+    }
 
     /**
      * A Parcelable implementation that used to hold the states of timer.
