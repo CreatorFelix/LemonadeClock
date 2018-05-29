@@ -9,12 +9,16 @@ import android.os.Parcelable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.AbsSavedState;
 
+import com.creator.lemonade.clock.BuildConfig;
 import com.creator.lemonade.clock.R;
 import com.creator.lemonade.clock.base.AbsClock;
 import com.creator.lemonade.clock.graphics.StopwatchDrawable;
 import com.creator.lemonade.clock.util.StopwatchModel;
+
+import java.util.Locale;
 
 /**
  * This stopwatch widget provides the following methods to control the running of stopwatch:
@@ -92,16 +96,26 @@ public class Stopwatch extends AbsClock {
             public void onTimeChanged(long timeInMillis) {
                 mStopwatchDrawable.setTime(timeInMillis);
                 if (mStopwatchListener != null) mStopwatchListener.onTimeChanged(timeInMillis);
+                if (BuildConfig.DEBUG) {
+                    Log.v(LOG_TAG, String.format(Locale.getDefault(), "onTimeChanged: %d", timeInMillis));
+                }
             }
 
             @Override
             public void onStateChanged(boolean started, boolean paused) {
                 if (mStopwatchListener != null) mStopwatchListener.onStateChanged(started, paused);
+                if (BuildConfig.DEBUG) {
+                    Log.v(LOG_TAG, String.format(Locale.getDefault(),
+                            "onStateChanged : IsStarted = %s, IsPaused = %s", started, paused));
+                }
             }
 
             @Override
             public void onLap(long lapTimeInMillis) {
                 if (mStopwatchListener != null) mStopwatchListener.onLap(lapTimeInMillis);
+                if (BuildConfig.DEBUG) {
+                    Log.v(LOG_TAG, String.format(Locale.getDefault(), "onLap: %d", lapTimeInMillis));
+                }
             }
         });
     }
