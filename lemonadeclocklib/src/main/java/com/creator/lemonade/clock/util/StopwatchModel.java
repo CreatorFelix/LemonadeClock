@@ -59,6 +59,7 @@ public class StopwatchModel {
      */
     public void attach(@NonNull Handler handler) {
         mHandler = handler;
+        updateRunning();
     }
 
     /**
