@@ -94,6 +94,19 @@ public class TimerModel {
         return mState;
     }
 
+    /**
+     * Sets the state of this timer.
+     *
+     * @param ss The target state
+     */
+    public void setState(TimerState ss) {
+        mState = new TimerState(ss);
+        if (mTimerWatcher != null) {
+            mTimerWatcher.onTimeChanged(getTimerRestTime(), mState.total);
+        }
+        updateRunning();
+    }
+
     private void setStarted(boolean started) {
         if (mState.started != started) {
             mState.started = started;
