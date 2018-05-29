@@ -15,6 +15,26 @@ import com.creator.lemonade.clock.util.TimerModel;
 
 import java.util.Locale;
 
+/**
+ * This timer widget provides the following methods to control the running of timer:
+ * <ul>
+ * <li>{@link #setTotalTime(long)}
+ * <li>{@link #startOrResume()}
+ * <li>{@link #pause()}
+ * <li>{@link #rest()}
+ * </ul>
+ * Remember to set the total of a timer first before you start it.
+ * <br>
+ * Also you can use the following methods to judge the state of the timer:
+ * <ul>
+ * <li>{@link #isStarted()}
+ * <li>{@link #isPaused()}
+ * </ul>
+ * <br>
+ * A callback class {@link TimerListener} is convenience to deal with some tasks from outside.
+ *
+ * @author Felix.Liang
+ */
 @SuppressWarnings("unused")
 public class Timer extends AbsClock {
 
@@ -92,6 +112,59 @@ public class Timer extends AbsClock {
         mTimerModel.setSuspend(visibility != VISIBLE);
     }
 
+    /**
+     * Convenience method to start or stop the timer.
+     */
+    public void startOrResume() {
+        mTimerModel.startOrResume();
+    }
+
+    /**
+     * Convenience method to pause the timer.
+     */
+    public void pause() {
+        mTimerModel.pause();
+    }
+
+    /**
+     * Convenience method to reset the timer.
+     */
+    public void rest() {
+        mTimerModel.reset();
+    }
+
+    /**
+     * Sets the total time of this timer, also this will stop and reset the timer.
+     *
+     * @param totalTime milliseconds to set
+     */
+    public void setTotalTime(long totalTime) {
+        mTimerModel.setTotalTime(totalTime);
+    }
+
+    /**
+     * Indicates whether this timer has been paused.
+     *
+     * @return true if has been paused, false otherwise
+     */
+    public boolean isPaused() {
+        return mTimerModel.isPaused();
+    }
+
+    /**
+     * Indicates whether this timer has been started.
+     *
+     * @return true if has been started, false otherwise
+     */
+    public boolean isStarted() {
+        return mTimerModel.isStarted();
+    }
+
+    /**
+     * Registers a callback to be invoked when the state of a timer changes.
+     *
+     * @param listener callback to run
+     */
     public void setTimerListener(TimerListener listener) {
         if (mTimerListener != listener) {
             mTimerListener = listener;
