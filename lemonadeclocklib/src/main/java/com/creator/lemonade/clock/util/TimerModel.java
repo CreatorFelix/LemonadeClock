@@ -37,8 +37,13 @@ public class TimerModel {
     private final Runnable mTick = new Runnable() {
         @Override
         public void run() {
-            if (mHandler != null && onTimeChanged()) {
-                mHandler.postDelayed(mTick, UPDATE_DELAY_TIME);
+            if (mHandler != null) {
+                if (onTimeChanged()) {
+                    mHandler.postDelayed(mTick, UPDATE_DELAY_TIME);
+                } else {
+                    setStarted(false);
+                    performTimeout();
+                }
             }
         }
     };
@@ -109,6 +114,7 @@ public class TimerModel {
     }
 
     private void setStarted(boolean started) {
+        if (mState.total == 0) return;
         if (mState.started != started) {
             mState.started = started;
             if (started) {
@@ -153,12 +159,7 @@ public class TimerModel {
             if (elapsedFromBase < 0) {
                 throw new IllegalStateException("Elapsed time should <= base time: " + mState.toString());
             }
-            long restTime = totalTime - elapsedFromBase;
-            if (restTime <= 0) {
-                performTimeout();
-                return 0;
-            }
-            return restTime;
+            return Math.max(totalTime - elapsedFromBase, 0);
         }
     }
 
