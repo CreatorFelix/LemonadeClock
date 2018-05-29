@@ -15,7 +15,7 @@ import java.util.TimeZone;
  *
  * @author Felix.Liang
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings("unused")
 public class Ticker {
 
     private boolean mIs24Format;
@@ -199,7 +199,7 @@ public class Ticker {
      *
      * @param update True if the ticker is updating, false otherwise
      */
-    public void setUpdating(boolean update) {
+    private void setUpdating(boolean update) {
         if (mHandler != null) {
             if (mUpdating != update) {
                 if (update) {
