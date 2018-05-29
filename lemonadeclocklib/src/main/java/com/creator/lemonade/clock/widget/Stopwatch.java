@@ -118,7 +118,7 @@ public class Stopwatch extends AbsClock {
     }
 
     /**
-     * Interface definition for a callback to be invoked the state of a stopwatch is changed.
+     * Interface definition for a callback to be invoked when the state of a stopwatch is changed.
      */
     public interface StopwatchListener {
 
