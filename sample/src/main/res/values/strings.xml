@@ -9,4 +9,5 @@
     <string name="resume">resume</string>
     <string name="reset">reset</string>
     <string name="demo_icon">demo icon</string>
+    <string name="set_time">set time</string>
 </resources>
