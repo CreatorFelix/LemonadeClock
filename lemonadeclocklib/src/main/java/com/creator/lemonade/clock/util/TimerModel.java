@@ -62,6 +62,7 @@ public class TimerModel {
      */
     public void attach(@NonNull Handler handler) {
         mHandler = handler;
+        updateRunning();
     }
 
     /**
