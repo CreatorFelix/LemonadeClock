@@ -5,12 +5,17 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.AbsSavedState;
 
+import com.creator.lemonade.clock.BuildConfig;
 import com.creator.lemonade.clock.base.AbsClock;
 import com.creator.lemonade.clock.graphics.TimerDrawable;
 import com.creator.lemonade.clock.util.TimerModel;
 
+import java.util.Locale;
+
+@SuppressWarnings("unused")
 public class Timer extends AbsClock {
 
     /**
@@ -28,6 +33,8 @@ public class Timer extends AbsClock {
      */
     private final TimerDrawable mTimerDrawable;
 
+    private TimerListener mTimerListener;
+
     public Timer(Context context) {
         this(context, null);
     }
@@ -39,17 +46,30 @@ public class Timer extends AbsClock {
         mTimerModel.setTimerListener(new TimerModel.TimerWatcher() {
             @Override
             public void onTimeChanged(long restTime, long totalTime) {
-
+                mTimerDrawable.setTotalTime(totalTime);
+                mTimerDrawable.setRestTime(restTime);
+                if (mTimerListener != null) mTimerListener.onTimeChanged(restTime);
+                if (BuildConfig.DEBUG) {
+                    Log.v(LOG_TAG, String.format(Locale.getDefault(),
+                            "onTimeChanged : restTime = %d, totalTime = %d", restTime, totalTime));
+                }
             }
 
             @Override
             public void onStateChanged(boolean started, boolean paused) {
-
+                if (mTimerListener != null) mTimerListener.onStateChanged(started, paused);
+                if (BuildConfig.DEBUG) {
+                    Log.v(LOG_TAG, String.format(Locale.getDefault(),
+                            "onStateChanged : IsStarted = %s, IsPaused = %s", started, paused));
+                }
             }
 
             @Override
             public void onTimeout() {
-
+                if (mTimerListener != null) mTimerListener.onTimeout();
+                if (BuildConfig.DEBUG) {
+                    Log.v(LOG_TAG, "onTimeout");
+                }
             }
         });
     }
@@ -70,6 +90,67 @@ public class Timer extends AbsClock {
     protected void onWindowVisibilityChanged(int visibility) {
         super.onWindowVisibilityChanged(visibility);
         mTimerModel.setSuspend(visibility != VISIBLE);
+    }
+
+    public void setTimerListener(TimerListener listener) {
+        if (mTimerListener != listener) {
+            mTimerListener = listener;
+        }
+    }
+
+    /**
+     * Interface definition for a callback to be invoked when the state of a timer changes.
+     */
+    public interface TimerListener {
+
+        /**
+         * Called when the rest time of timer changes.
+         *
+         * @param restTime the rest milliseconds of the timer
+         */
+        void onTimeChanged(long restTime);
+
+        /**
+         * Called when the state of timer changes.
+         *
+         * @param started true if the timer has been started, false otherwise
+         * @param paused  true if the timer has been paused, false otherwise
+         */
+        void onStateChanged(boolean started, boolean paused);
+
+        /**
+         * Called when the timer times out.
+         */
+        void onTimeout();
+    }
+
+    /**
+     * This adapter class provides empty implementations of the methods from {@link TimerListener}.
+     * Any custom listener that cares only about a subset of the methods of this listener can
+     * simply subclass this adapter class instead of implementing the interface directly.
+     */
+    public static abstract class TimerListenerAdapter implements TimerListener {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void onTimeChanged(long restTime) {
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void onStateChanged(boolean started, boolean paused) {
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void onTimeout() {
+        }
     }
 
     @Nullable
